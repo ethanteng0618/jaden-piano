@@ -128,25 +128,30 @@ export default function AdminPage() {
 
 function UploadVideoForm({ token }: { token: string }) {
   const [loading, setLoading] = useState(false)
+  const [uploadMode, setUploadMode] = useState<'file' | 'youtube'>('youtube')
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     tags: '',
     aspectRatio: 'video' as 'video' | 'vertical',
     difficulty: 'beginner',
-    learningTime: '10 mins'
+    learningTime: '10 mins',
+    youtubeUrl: ''
   })
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!videoFile) return
+    if (uploadMode === 'file' && !videoFile) return
+    if (uploadMode === 'youtube' && !formData.youtubeUrl) return
 
     setLoading(true)
     try {
       const fd = new FormData()
-      fd.append('video', videoFile)
+      if (uploadMode === 'file' && videoFile) {
+        fd.append('video', videoFile)
+      }
       if (thumbnailFile) fd.append('thumbnail', thumbnailFile)
       fd.append('title', formData.title)
       fd.append('description', formData.description)
@@ -154,10 +159,13 @@ function UploadVideoForm({ token }: { token: string }) {
       fd.append('aspectRatio', formData.aspectRatio)
       fd.append('difficulty', formData.difficulty)
       fd.append('learningTime', formData.learningTime)
+      if (uploadMode === 'youtube') {
+        fd.append('youtubeUrl', formData.youtubeUrl)
+      }
 
       await uploadVideo(fd, token)
       alert('Video uploaded successfully!')
-      setFormData({ title: '', description: '', tags: '', aspectRatio: 'video', difficulty: 'beginner', learningTime: '10 mins' })
+      setFormData({ title: '', description: '', tags: '', aspectRatio: 'video', difficulty: 'beginner', learningTime: '10 mins', youtubeUrl: '' })
       setVideoFile(null)
       setThumbnailFile(null)
     } catch (error: any) {
@@ -171,14 +179,54 @@ function UploadVideoForm({ token }: { token: string }) {
     <Card>
       <CardHeader>
         <CardTitle>Upload Video</CardTitle>
-        <CardDescription>Upload a new video tutorial</CardDescription>
+        <CardDescription>Upload a video tutorial or link a YouTube video</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Upload Mode Toggle */}
           <div>
-            <Label>Video File *</Label>
-            <Input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} required />
+            <Label className="mb-2 block">Video Source</Label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setUploadMode('youtube')}
+                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium border transition-all ${uploadMode === 'youtube'
+                    ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                    : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
+                  }`}
+              >
+                🎬 YouTube Link
+              </button>
+              <button
+                type="button"
+                onClick={() => setUploadMode('file')}
+                className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium border transition-all ${uploadMode === 'file'
+                    ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                    : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
+                  }`}
+              >
+                📁 File Upload
+              </button>
+            </div>
           </div>
+
+          {uploadMode === 'youtube' ? (
+            <div>
+              <Label>YouTube URL *</Label>
+              <Input
+                value={formData.youtubeUrl}
+                onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                required
+              />
+              <p className="text-xs text-muted-foreground mt-1">Paste a YouTube video link. It will be embedded directly on the site.</p>
+            </div>
+          ) : (
+            <div>
+              <Label>Video File *</Label>
+              <Input type="file" accept="video/*" onChange={(e) => setVideoFile(e.target.files?.[0] || null)} required />
+            </div>
+          )}
           <div>
             <Label>Thumbnail (optional)</Label>
             <Input type="file" accept="image/*" onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)} />
@@ -212,7 +260,9 @@ function UploadVideoForm({ token }: { token: string }) {
             <Input value={formData.learningTime} onChange={(e) => setFormData({ ...formData, learningTime: e.target.value })} />
           </div>
 
-          <Button type="submit" disabled={loading}>Upload Video</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Uploading...' : uploadMode === 'youtube' ? 'Add YouTube Video' : 'Upload Video'}
+          </Button>
         </form>
       </CardContent>
     </Card>

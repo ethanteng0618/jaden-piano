@@ -85,21 +85,25 @@ async function uploadFileToStorage(file: File, folder: string, token: string): P
 }
 
 export async function uploadVideo(formData: FormData, token: string) {
-  // Step 1: Upload files directly to Supabase Storage (browser → storage, no size limit)
-  const videoFile = formData.get('video') as File
+  const videoFile = formData.get('video') as File | null
   const thumbnailFile = formData.get('thumbnail') as File | null
+  const youtubeUrl = formData.get('youtubeUrl') as string | null
 
   let video_url = ''
   let thumbnail_url = null
 
-  if (videoFile) {
+  // If YouTube URL is provided, use it directly (no file upload needed)
+  if (youtubeUrl) {
+    video_url = youtubeUrl
+  } else if (videoFile) {
     video_url = await uploadFileToStorage(videoFile, 'videos', token)
   }
+
   if (thumbnailFile) {
     thumbnail_url = await uploadFileToStorage(thumbnailFile, 'thumbnails', token)
   }
 
-  // Step 2: Send only metadata to the API route (tiny JSON payload)
+  // Send only metadata to the API route (tiny JSON payload)
   const res = await fetch('/api/upload/video', {
     method: 'POST',
     headers: {

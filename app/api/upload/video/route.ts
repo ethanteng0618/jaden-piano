@@ -22,6 +22,15 @@ export async function POST(req: Request) {
 
         const body = await req.json();
 
+        // Auto-generate YouTube thumbnail if none provided
+        let thumbnail_url = body.thumbnail_url || null;
+        if (!thumbnail_url && body.video_url) {
+            const ytMatch = body.video_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([^&?/\s]+)/);
+            if (ytMatch) {
+                thumbnail_url = `https://img.youtube.com/vi/${ytMatch[1]}/maxresdefault.jpg`;
+            }
+        }
+
         const { data, error } = await supabase.from('videos').insert([{
             title: body.title,
             description: body.description || null,
@@ -30,7 +39,7 @@ export async function POST(req: Request) {
             difficulty: body.difficulty || 'beginner',
             learning_time: body.learningTime || '10 mins',
             video_url: body.video_url,
-            thumbnail_url: body.thumbnail_url || null
+            thumbnail_url
         }]).select().single();
 
         if (error) throw error;

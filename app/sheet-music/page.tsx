@@ -85,14 +85,9 @@ export default function SheetMusicPage() {
 
   async function handleDelete(id: string) {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/sheet-music/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (!res.ok) throw new Error('Failed to delete')
+      if (!isOwner) throw new Error('Not authorized')
+      const { error } = await supabase.from('sheet_music').delete().eq('id', id)
+      if (error) throw error
 
       const updated = sheetMusic.filter(s => s.id !== id)
       setSheetMusic(updated)

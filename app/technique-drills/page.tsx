@@ -68,14 +68,9 @@ export default function TechniqueDrillsPage() {
 
   async function handleDelete(id: string) {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/technique-drills/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (!res.ok) throw new Error('Failed to delete')
+      if (!isOwner) throw new Error('Not authorized')
+      const { error } = await supabase.from('technique_drills').delete().eq('id', id)
+      if (error) throw error
 
       setDrills(drills.filter(d => d.id !== id))
     } catch (error) {

@@ -47,9 +47,6 @@ export function ContentCard({
   learning_time
 }: ContentCardProps) {
   const displayLearningTime = learningTime || learning_time
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
-  const displayThumbnail = thumbnail?.startsWith('/uploads') ? `${API_URL}${thumbnail}` : thumbnail
-  const displayDownloadUrl = downloadUrl?.startsWith('/uploads') ? `${API_URL}${downloadUrl}` : downloadUrl
   const [isDeleting, setIsDeleting] = useState(false)
   // Optimistic UI for saves
   const [currentSaved, setCurrentSaved] = useState(isSaved)
@@ -101,9 +98,9 @@ export function ContentCard({
     <SpotlightCard className="h-full group hover:-translate-y-1" spotlightColor="rgba(120, 160, 255, 0.15)">
       <Card className={`h-full overflow-hidden shadow-sm transition-all duration-300 rounded-2xl bg-card/60 backdrop-blur-sm ${difficultyBorder}`}>
         <div className={`relative bg-muted overflow-hidden ${aspectRatio === 'vertical' ? 'aspect-[9/16]' : 'aspect-video'}`}>
-          {displayThumbnail ? (
+          {thumbnail ? (
             <img
-              src={displayThumbnail || "/placeholder.svg"}
+              src={thumbnail || "/placeholder.svg"}
               alt={title}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
@@ -183,13 +180,13 @@ export function ContentCard({
         </CardContent>
 
         <CardFooter className="p-5 pt-0">
-          {displayDownloadUrl ? (
+          {downloadUrl ? (
             <Button
               className="w-full rounded-full font-medium shadow-none hover:shadow-md transition-all"
               variant="outline"
               onClick={() => {
                 if (onPlay) onPlay()
-                window.open(displayDownloadUrl, '_blank')
+                window.open(downloadUrl, '_blank')
               }}
             >
               {type === 'video' ? (

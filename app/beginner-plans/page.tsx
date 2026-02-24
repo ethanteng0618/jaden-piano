@@ -58,14 +58,9 @@ export default function BeginnerPlansPage() {
     if (!confirm('Are you sure you want to delete this plan?')) return
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/beginner-plans/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (!res.ok) throw new Error('Failed to delete')
+      if (!isOwner) throw new Error('Not authorized')
+      const { error } = await supabase.from('beginner_plans').delete().eq('id', id)
+      if (error) throw error
 
       setPlans(plans.filter(p => p.id !== id))
     } catch (error) {

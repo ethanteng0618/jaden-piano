@@ -68,14 +68,9 @@ export default function VideoTutorialsPage() {
 
   async function handleDelete(id: string) {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/videos/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (!res.ok) throw new Error('Failed to delete')
+      if (!isOwner) throw new Error('Not authorized')
+      const { error } = await supabase.from('videos').delete().eq('id', id)
+      if (error) throw error
 
       setVideos(videos.filter(v => v.id !== id))
     } catch (error) {

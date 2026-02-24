@@ -37,6 +37,9 @@ export function Footer() {
           <p className="text-sm text-muted-foreground text-center">
             © 2026 j8den.shia
           </p>
+          <p className="text-sm text-muted-foreground text-center">
+            Made by <a href="https://www.linkedin.com/in/ethan-teng-952149235/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors underline underline-offset-4">Ethan Teng</a>
+          </p>
         </div>
       </div>
     </footer>

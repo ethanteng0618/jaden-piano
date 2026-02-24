@@ -3,6 +3,7 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { ContentCard } from '@/components/content-card'
+import { DifficultyLegend } from '@/components/difficulty-legend'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useEffect, useState } from 'react'
 import { fetchVideos, incrementVideoPlay } from '@/lib/api'
@@ -142,10 +143,11 @@ export default function VideoTutorialsPage() {
       <main className="min-h-screen">
         <section className="bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
           <div className="container mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Video Tutorials</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl">
+            <h1 className="text-4xl md:text-5xl font-sans font-bold mb-4 text-balance">Video Tutorials</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mb-8">
               Learn from j8den&apos;s comprehensive video lessons and TikTok-style quick tips
             </p>
+            <DifficultyLegend />
           </div>
         </section>
 
@@ -169,6 +171,8 @@ export default function VideoTutorialsPage() {
                   plays={video.plays}
                   saves={video.saves_count}
                   isSaved={savedIds.has(video.id)}
+                  difficulty={video.difficulty}
+                  learningTime={video.learning_time}
                   onToggleSave={() => handleToggleSave(video)}
                   onPlay={() => handlePlay(video.id)}
                 />

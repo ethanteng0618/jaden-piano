@@ -130,7 +130,7 @@ export function InteractiveBackground() {
     return (
         <canvas
             ref={canvasRef}
-            className="fixed inset-0 z-[-1] pointer-events-none bg-background"
+            className="fixed inset-0 z-[-1] pointer-events-none bg-transparent"
         />
     )
 }

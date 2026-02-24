@@ -9,37 +9,50 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Upload, Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { fetchVideos, fetchSheetMusic } from '@/lib/api'
+import { supabase } from '@/lib/supabase'
 
 export default function ProfilePage() {
   const [content, setContent] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function loadContent() {
+    async function loadSavedContent() {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setLoading(false)
+        return
+      }
+
       try {
-        const [videos, sheetMusic] = await Promise.all([
-          fetchVideos(),
-          fetchSheetMusic()
-        ])
+        // Fetch saved videos
+        const { data: savedVids } = await supabase
+          .from('saved_videos')
+          .select('video_id, videos(*)')
+          .eq('user_id', session.user.id)
 
-        const normalizedVideos = videos.map((v: any) => ({ ...v, type: 'video', aspectRatio: 'video' }))
-        const normalizedSheets = sheetMusic.map((s: any) => ({ ...s, type: 'pdf', downloadUrl: s.pdf_url }))
+        // Fetch saved sheet music
+        const { data: savedSheets } = await supabase
+          .from('saved_sheet_music')
+          .select('sheet_music_id, sheet_music(*)')
+          .eq('user_id', session.user.id)
 
-        // Combine and show most recent
-        const combined = [...normalizedVideos, ...normalizedSheets].sort((a, b) =>
+        const normalizedVideos = (savedVids || []).map((v: any) => ({ ...v.videos, type: 'video', aspectRatio: 'video' }))
+        const normalizedSheets = (savedSheets || []).map((s: any) => ({ ...s.sheet_music, type: 'pdf', downloadUrl: s.sheet_music.pdf_url }))
+
+        // Combine
+        const combined = [...normalizedVideos, ...normalizedSheets].filter(item => item && item.id).sort((a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )
 
         setContent(combined)
       } catch (error) {
-        console.error('Failed to load profile content', error)
+        console.error('Failed to load saved content', error)
       } finally {
         setLoading(false)
       }
     }
 
-    loadContent()
+    loadSavedContent()
   }, [])
 
   return (
@@ -55,96 +68,66 @@ export default function ProfilePage() {
               </Avatar>
               <div className="flex-1">
                 <h1 className="text-4xl font-bold mb-2 tracking-tight">Jaden Shia</h1>
-                <p className="text-muted-foreground mb-4 text-lg">Piano Student</p>
+                <p className="text-muted-foreground mb-4 text-lg">Piano Creator</p>
               </div>
             </div>
           </div>
         </section>
 
         <section className="container mx-auto px-4 py-12">
-          <Tabs defaultValue="uploads" className="w-full">
-            <TabsList className="mb-8 w-full justify-start h-auto p-1 bg-muted/80 backdrop-blur-sm rounded-lg border shadow-sm">
-              <TabsTrigger
-                value="uploads"
-                className="rounded-md px-4 py-2"
-              >
-                Recent Uploads
-              </TabsTrigger>
-              <TabsTrigger
-                value="progress"
-                className="rounded-md px-4 py-2"
-              >
-                My Progress
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="uploads" className="mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="col-span-1 lg:col-span-2 space-y-8">
+              <h2 className="text-3xl font-serif font-bold tracking-tight">Saved Content</h2>
               {loading ? (
-                <div className="text-center py-12 text-muted-foreground">Loading recent uploads...</div>
+                <div className="text-center py-12 text-muted-foreground">Loading your saves...</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {content.map((item) => (
-                    <ContentCard
-                      key={item.id || item.title}
-                      {...item}
-                      thumbnail={item.thumbnail_url}
-                    />
-                  ))}
-                  {content.length === 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {content.length > 0 ? (
+                    content.map((item) => (
+                      <ContentCard
+                        key={item.id || item.title}
+                        {...item}
+                        thumbnail={item.thumbnail_url}
+                      />
+                    ))
+                  ) : (
                     <div className="col-span-full text-center text-muted-foreground py-12">
-                      No recent uploads found.
+                      You haven't saved any content yet!
                     </div>
                   )}
                 </div>
               )}
-            </TabsContent>
+            </div>
 
-            <TabsContent value="progress" className="mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="border-border/50 shadow-sm">
-                  <CardHeader>
-                    <CardTitle>Current Plan</CardTitle>
-                    <CardDescription>30-Day Foundation</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-muted-foreground">Progress</span>
-                          <span className="font-semibold">45%</span>
-                        </div>
-                        <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-primary w-[45%] rounded-full" />
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        You&apos;re on Day 14 of 30. Keep up the great work!
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-border/50 shadow-sm">
-                  <CardHeader>
-                    <CardTitle>Practice Stats</CardTitle>
-                    <CardDescription>This month</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-3xl font-bold tracking-tight">12 hours</p>
-                        <p className="text-sm text-muted-foreground">Total practice time</p>
-                      </div>
-                      <div>
-                        <p className="text-3xl font-bold tracking-tight">18 days</p>
-                        <p className="text-sm text-muted-foreground">Practice streak</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
+            <div className="space-y-6">
+              <Card className="border-border/50 shadow-sm">
+                <CardHeader>
+                  <CardTitle>FAQ & Navigation</CardTitle>
+                  <CardDescription>How to use the website</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 text-sm text-muted-foreground">
+                  <div>
+                    <h4 className="font-semibold text-foreground">Video Tutorials</h4>
+                    <p>Watch step-by-step video lessons sorted by difficulty.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground">Sheet Music</h4>
+                    <p>Download and print PDF sheet music for your practice.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground">Technique Drills</h4>
+                    <p>Focused exercises to improve your piano technique.</p>
+                  </div>
+                  <Button variant="outline" className="w-full mt-4 border-2 hover:bg-destructive hover:text-white hover:border-destructive transition-colors" onClick={async () => {
+                    await supabase.auth.signOut()
+                    window.location.href = '/'
+                  }}>
+                    Log Out
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </section>
       </main>
       <Footer />

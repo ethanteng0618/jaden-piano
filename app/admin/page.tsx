@@ -92,8 +92,8 @@ export default function AdminPage() {
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
                   className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 group relative overflow-hidden ${activeTab === item.id
-                      ? 'bg-primary text-primary-foreground shadow-md'
-                      : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                     }`}
                 >
                   <div className="relative z-10">
@@ -132,7 +132,9 @@ function UploadVideoForm({ token }: { token: string }) {
     title: '',
     description: '',
     tags: '',
-    aspectRatio: 'video' as 'video' | 'vertical'
+    aspectRatio: 'video' as 'video' | 'vertical',
+    difficulty: 'beginner',
+    learningTime: '10 mins'
   })
   const [videoFile, setVideoFile] = useState<File | null>(null)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
@@ -150,10 +152,12 @@ function UploadVideoForm({ token }: { token: string }) {
       fd.append('description', formData.description)
       fd.append('tags', JSON.stringify(formData.tags.split(',').map(t => t.trim())))
       fd.append('aspectRatio', formData.aspectRatio)
+      fd.append('difficulty', formData.difficulty)
+      fd.append('learningTime', formData.learningTime)
 
       await uploadVideo(fd, token)
       alert('Video uploaded successfully!')
-      setFormData({ title: '', description: '', tags: '', aspectRatio: 'video' })
+      setFormData({ title: '', description: '', tags: '', aspectRatio: 'video', difficulty: 'beginner', learningTime: '10 mins' })
       setVideoFile(null)
       setThumbnailFile(null)
     } catch (error: any) {
@@ -191,6 +195,22 @@ function UploadVideoForm({ token }: { token: string }) {
             <Label>Tags (comma-separated)</Label>
             <Input value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="Beginner, Pop, Tutorial" />
           </div>
+          <div>
+            <Label>Difficulty</Label>
+            <select
+              value={formData.difficulty}
+              onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+              className="w-full p-2 border rounded"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div>
+            <Label>Learning Time (e.g. 10 mins)</Label>
+            <Input value={formData.learningTime} onChange={(e) => setFormData({ ...formData, learningTime: e.target.value })} />
+          </div>
 
           <Button type="submit" disabled={loading}>Upload Video</Button>
         </form>
@@ -201,7 +221,7 @@ function UploadVideoForm({ token }: { token: string }) {
 
 function UploadSheetMusicForm({ token }: { token: string }) {
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({ title: '', description: '', tags: '' })
+  const [formData, setFormData] = useState({ title: '', description: '', tags: '', difficulty: 'beginner', learningTime: '10 mins' })
   const [pdfFile, setPdfFile] = useState<File | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -215,10 +235,12 @@ function UploadSheetMusicForm({ token }: { token: string }) {
       fd.append('title', formData.title)
       fd.append('description', formData.description)
       fd.append('tags', JSON.stringify(formData.tags.split(',').map(t => t.trim())))
+      fd.append('difficulty', formData.difficulty)
+      fd.append('learningTime', formData.learningTime)
 
       await uploadSheetMusic(fd, token)
       alert('Sheet music uploaded successfully!')
-      setFormData({ title: '', description: '', tags: '' })
+      setFormData({ title: '', description: '', tags: '', difficulty: 'beginner', learningTime: '10 mins' })
       setPdfFile(null)
     } catch (error: any) {
       alert('Upload failed: ' + error.message)
@@ -251,6 +273,22 @@ function UploadSheetMusicForm({ token }: { token: string }) {
             <Label>Tags (comma-separated)</Label>
             <Input value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="Intermediate, Classical, Beethoven" />
           </div>
+          <div>
+            <Label>Difficulty</Label>
+            <select
+              value={formData.difficulty}
+              onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+              className="w-full p-2 border rounded"
+            >
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+          <div>
+            <Label>Learning Time (e.g. 10 mins)</Label>
+            <Input value={formData.learningTime} onChange={(e) => setFormData({ ...formData, learningTime: e.target.value })} />
+          </div>
           <Button type="submit" disabled={loading}>Upload Sheet Music</Button>
         </form>
       </CardContent>
@@ -260,7 +298,7 @@ function UploadSheetMusicForm({ token }: { token: string }) {
 
 function UploadDrillForm({ token }: { token: string }) {
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({ title: '', description: '', tags: '', difficulty: 'intermediate' })
+  const [formData, setFormData] = useState({ title: '', description: '', tags: '', difficulty: 'intermediate', learningTime: '10 mins' })
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
 
@@ -277,10 +315,11 @@ function UploadDrillForm({ token }: { token: string }) {
       fd.append('description', formData.description)
       fd.append('tags', JSON.stringify(formData.tags.split(',').map(t => t.trim())))
       fd.append('difficulty', formData.difficulty)
+      fd.append('learningTime', formData.learningTime)
 
       await uploadTechniqueDrill(fd, token)
       alert('Technique drill uploaded successfully!')
-      setFormData({ title: '', description: '', tags: '', difficulty: 'intermediate' })
+      setFormData({ title: '', description: '', tags: '', difficulty: 'intermediate', learningTime: '10 mins' })
       setPdfFile(null)
       setThumbnailFile(null)
     } catch (error: any) {
@@ -330,6 +369,10 @@ function UploadDrillForm({ token }: { token: string }) {
               <option value="advanced">Advanced</option>
             </select>
           </div>
+          <div>
+            <Label>Learning Time (e.g. 10 mins)</Label>
+            <Input value={formData.learningTime} onChange={(e) => setFormData({ ...formData, learningTime: e.target.value })} />
+          </div>
           <Button type="submit" disabled={loading}>Upload Drill</Button>
         </form>
       </CardContent>
@@ -344,7 +387,8 @@ function CreatePlanForm({ token }: { token: string }) {
     duration: '',
     level: '',
     description: '',
-    lessons: ''
+    lessons: '',
+    learningTime: '1 week'
   })
 
   async function handleSubmit(e: React.FormEvent) {
@@ -357,7 +401,7 @@ function CreatePlanForm({ token }: { token: string }) {
         lessons
       }, token)
       alert('Beginner plan created successfully!')
-      setFormData({ title: '', duration: '', level: '', description: '', lessons: '' })
+      setFormData({ title: '', duration: '', level: '', description: '', lessons: '', learningTime: '1 week' })
     } catch (error: any) {
       alert('Creation failed: ' + error.message)
     } finally {
@@ -398,6 +442,10 @@ function CreatePlanForm({ token }: { token: string }) {
               rows={8}
               required
             />
+          </div>
+          <div>
+            <Label>Learning Time / Duration Meta (e.g. 1 week)</Label>
+            <Input value={formData.learningTime} onChange={(e) => setFormData({ ...formData, learningTime: e.target.value })} />
           </div>
           <Button type="submit" disabled={loading}>Create Plan</Button>
         </form>

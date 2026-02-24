@@ -1,13 +1,13 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google'
+import { Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { InteractiveBackground } from '@/components/interactive-background'
+import { GridBackground } from '@/components/grid-background'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-const _geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
-const _playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
+const fontSans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const fontSerif = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
   title: 'j8den.shia',
@@ -16,19 +16,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
+        url: '/icon.svg?v=3',
         type: 'image/svg+xml',
       },
     ],
-    apple: '/apple-icon.png',
   },
 }
 
@@ -38,11 +29,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${_geist.variable} ${_geistMono.variable} ${_playfair.variable} font-sans antialiased text-foreground`}>
-        <InteractiveBackground />
-        {children}
-        <Analytics />
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <body className={`${fontSans.variable} ${fontSerif.variable} font-sans antialiased text-foreground selection:bg-primary/30 selection:text-primary-foreground`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <GridBackground />
+          {children}
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -3,6 +3,7 @@
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { ContentCard } from '@/components/content-card'
+import { DifficultyLegend } from '@/components/difficulty-legend'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useEffect, useState } from 'react'
 import { fetchTechniqueDrills, incrementTechniqueDrillPlay } from '@/lib/api'
@@ -150,10 +151,11 @@ export default function TechniqueDrillsPage() {
       <main className="min-h-screen">
         <section className="bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
           <div className="container mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Technique Drills</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl">
+            <h1 className="text-4xl md:text-5xl font-sans font-bold mb-4 text-balance">Technique Drills</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mb-8">
               Build your technical foundation with structured practice exercises
             </p>
+            <DifficultyLegend />
           </div>
         </section>
 
@@ -199,6 +201,8 @@ export default function TechniqueDrillsPage() {
                       plays={drill.plays}
                       saves={drill.saves_count}
                       isSaved={savedIds.has(drill.id)}
+                      difficulty={drill.difficulty}
+                      learningTime={drill.learning_time}
                       onToggleSave={() => handleToggleSave(drill)}
                       onPlay={() => handlePlay(drill.id)}
                     />
@@ -227,6 +231,8 @@ export default function TechniqueDrillsPage() {
                       plays={drill.plays}
                       saves={drill.saves_count}
                       isSaved={savedIds.has(drill.id)}
+                      difficulty={drill.difficulty}
+                      learningTime={drill.learning_time}
                       onToggleSave={() => handleToggleSave(drill)}
                       onPlay={() => handlePlay(drill.id)}
                     />
@@ -255,6 +261,8 @@ export default function TechniqueDrillsPage() {
                       plays={drill.plays}
                       saves={drill.saves_count}
                       isSaved={savedIds.has(drill.id)}
+                      difficulty={drill.difficulty}
+                      learningTime={drill.learning_time}
                       onToggleSave={() => handleToggleSave(drill)}
                       onPlay={() => handlePlay(drill.id)}
                     />

@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { Piano, Settings } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export function Header() {
   const [user, setUser] = useState<any>(null)
@@ -82,6 +83,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           {user ? (
             <>
               {isOwner && (

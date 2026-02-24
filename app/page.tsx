@@ -4,6 +4,8 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { HeroSection } from '@/components/hero-section'
 import { ContentCard } from '@/components/content-card'
+import { DifficultyLegend } from '@/components/difficulty-legend'
+import { HeroAurora } from '@/components/hero-aurora'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
@@ -61,7 +63,9 @@ export default function Home() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl font-bold mb-2">Featured Content</h2>
-              <p className="text-muted-foreground">Start your practice with these popular resources</p>
+              <p className="text-muted-foreground mb-4">Start your practice with these popular resources</p>
+
+              <DifficultyLegend />
             </div>
             <Link href="/video-tutorials">
               <Button variant="ghost" className="gap-2">
@@ -90,16 +94,23 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12">
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-3xl p-8 md:p-12 text-center">
-            <h2 className="text-3xl font-bold mb-4">Ready to Level Up?</h2>
-            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join thousands of piano enthusiasts learning from TikTok&apos;s j8den.shia.
-              Get access to exclusive sheet music, structured lesson plans, and technique drills.
-            </p>
-            <Button size="lg" className="rounded-full">
-              Start Learning Today
-            </Button>
+        <section className="container mx-auto px-4 py-20">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-card/30 border border-border/50 shadow-2xl backdrop-blur-sm">
+            <HeroAurora />
+            <div className="relative z-10 px-6 py-20 md:py-32 text-center max-w-4xl mx-auto">
+              <h2 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight font-sans">
+                Ready to Level Up?
+              </h2>
+              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+                Join thousands of piano enthusiasts learning from TikTok&apos;s <span className="text-foreground font-medium">j8den.shia</span>.
+                Get access to exclusive sheet music, structured lesson plans, and technique drills.
+              </p>
+              <Link href="/video-tutorials">
+                <Button size="lg" className="rounded-full h-16 px-12 text-lg font-bold shadow-[0_0_40px_-10px_var(--primary)] hover:shadow-[0_0_60px_-10px_var(--primary)] hover:-translate-y-1 transition-all duration-300">
+                  Start Learning Today
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       </main>

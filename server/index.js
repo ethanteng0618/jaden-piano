@@ -204,7 +204,7 @@ app.post('/api/upload/video', isOwner, upload.fields([
   { name: 'thumbnail', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const { title, description, tags, aspectRatio } = req.body;
+    const { title, description, tags, aspectRatio, difficulty, learningTime } = req.body;
     const videoFile = req.files?.video?.[0];
     const thumbnailFile = req.files?.thumbnail?.[0];
 
@@ -219,6 +219,8 @@ app.post('/api/upload/video', isOwner, upload.fields([
       video_url: `/uploads/videos/${videoFile.filename}`,
       thumbnail_url: thumbnailFile ? `/uploads/thumbnails/${thumbnailFile.filename}` : null,
       aspect_ratio: aspectRatio || 'video',
+      difficulty: difficulty || 'beginner',
+      learning_time: learningTime || '10 mins',
       created_at: new Date().toISOString()
     };
 
@@ -237,7 +239,7 @@ app.post('/api/upload/video', isOwner, upload.fields([
 
 app.post('/api/upload/sheet-music', isOwner, upload.single('pdf'), async (req, res) => {
   try {
-    const { title, description, tags } = req.body;
+    const { title, description, tags, difficulty, learningTime } = req.body;
     const pdfFile = req.file;
 
     if (!pdfFile) {
@@ -248,6 +250,8 @@ app.post('/api/upload/sheet-music', isOwner, upload.single('pdf'), async (req, r
       title,
       description: description || null,
       tags: tags ? JSON.parse(tags) : [],
+      difficulty: difficulty || 'beginner',
+      learning_time: learningTime || '10 mins',
       pdf_url: `/uploads/sheet-music/${pdfFile.filename}`,
       created_at: new Date().toISOString()
     };
@@ -270,7 +274,7 @@ app.post('/api/upload/technique-drill', isOwner, upload.fields([
   { name: 'thumbnail', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const { title, description, tags, difficulty } = req.body;
+    const { title, description, tags, difficulty, learningTime } = req.body;
     const pdfFile = req.files?.pdf?.[0];
     const thumbnailFile = req.files?.thumbnail?.[0];
 
@@ -283,6 +287,7 @@ app.post('/api/upload/technique-drill', isOwner, upload.fields([
       description: description || null,
       tags: tags ? JSON.parse(tags) : [],
       difficulty: difficulty || 'intermediate',
+      learning_time: learningTime || '10 mins',
       pdf_url: `/uploads/sheet-music/${pdfFile.filename}`,
       thumbnail_url: thumbnailFile ? `/uploads/thumbnails/${thumbnailFile.filename}` : null,
       created_at: new Date().toISOString()
@@ -303,7 +308,7 @@ app.post('/api/upload/technique-drill', isOwner, upload.fields([
 
 app.post('/api/upload/beginner-plan', isOwner, async (req, res) => {
   try {
-    const { title, duration, level, description, lessons } = req.body;
+    const { title, duration, level, description, lessons, learningTime } = req.body;
 
     const planData = {
       title,
@@ -311,6 +316,7 @@ app.post('/api/upload/beginner-plan', isOwner, async (req, res) => {
       level,
       description,
       lessons: lessons ? JSON.parse(lessons) : [],
+      learning_time: learningTime || '1 week',
       created_at: new Date().toISOString()
     };
 

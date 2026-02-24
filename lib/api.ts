@@ -56,136 +56,46 @@ export async function fetchBeginnerPlans() {
 }
 
 export async function uploadVideo(formData: FormData, token: string) {
-  const authClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
-  );
-
-  const videoFile = formData.get('video') as File;
-  const thumbnailFile = formData.get('thumbnail') as File;
-
-  let video_url = '';
-  let thumbnail_url = null;
-
-  if (videoFile) {
-    const ext = videoFile.name.split('.').pop();
-    const { data: vData, error: vErr } = await authClient.storage.from('content').upload(`videos/${Date.now()}-${Math.random()}.${ext}`, videoFile);
-    if (vErr) throw vErr;
-    video_url = authClient.storage.from('content').getPublicUrl(vData.path).data.publicUrl;
-  }
-
-  if (thumbnailFile) {
-    const ext = thumbnailFile.name.split('.').pop();
-    const { data: tData, error: tErr } = await authClient.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
-    if (tErr) throw tErr;
-    thumbnail_url = authClient.storage.from('content').getPublicUrl(tData.path).data.publicUrl;
-  }
-
-  const { data, error } = await authClient.from('videos').insert([{
-    title: formData.get('title'),
-    description: formData.get('description') || null,
-    tags: JSON.parse(formData.get('tags') as string || '[]'),
-    aspect_ratio: formData.get('aspectRatio') || 'video',
-    difficulty: formData.get('difficulty') || 'beginner',
-    learning_time: formData.get('learningTime') || '10 mins',
-    video_url,
-    thumbnail_url
-  }]);
-
-  if (error) throw error;
-  return data;
+  const res = await fetch('/api/upload/video', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: formData
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
 export async function uploadSheetMusic(formData: FormData, token: string) {
-  const authClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
-  );
-
-  const pdfFile = formData.get('pdf') as File;
-  let pdf_url = '';
-
-  if (pdfFile) {
-    const ext = pdfFile.name.split('.').pop();
-    const { data: pData, error: pErr } = await authClient.storage.from('content').upload(`sheet-music/${Date.now()}-${Math.random()}.${ext}`, pdfFile);
-    if (pErr) throw pErr;
-    pdf_url = authClient.storage.from('content').getPublicUrl(pData.path).data.publicUrl;
-  }
-
-  const { data, error } = await authClient.from('sheet_music').insert([{
-    title: formData.get('title'),
-    description: formData.get('description') || null,
-    tags: JSON.parse(formData.get('tags') as string || '[]'),
-    difficulty: formData.get('difficulty') || 'beginner',
-    learning_time: formData.get('learningTime') || '10 mins',
-    pdf_url
-  }]);
-
-  if (error) throw error;
-  return data;
+  const res = await fetch('/api/upload/sheet-music', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: formData
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
 export async function uploadTechniqueDrill(formData: FormData, token: string) {
-  const authClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
-  );
-
-  const pdfFile = formData.get('pdf') as File;
-  const thumbnailFile = formData.get('thumbnail') as File;
-
-  let pdf_url = '';
-  let thumbnail_url = null;
-
-  if (pdfFile) {
-    const ext = pdfFile.name.split('.').pop();
-    const { data: pData, error: pErr } = await authClient.storage.from('content').upload(`drills/${Date.now()}-${Math.random()}.${ext}`, pdfFile);
-    if (pErr) throw pErr;
-    pdf_url = authClient.storage.from('content').getPublicUrl(pData.path).data.publicUrl;
-  }
-
-  if (thumbnailFile) {
-    const ext = thumbnailFile.name.split('.').pop();
-    const { data: tData, error: tErr } = await authClient.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
-    if (tErr) throw tErr;
-    thumbnail_url = authClient.storage.from('content').getPublicUrl(tData.path).data.publicUrl;
-  }
-
-  const { data, error } = await authClient.from('technique_drills').insert([{
-    title: formData.get('title'),
-    description: formData.get('description') || null,
-    tags: JSON.parse(formData.get('tags') as string || '[]'),
-    difficulty: formData.get('difficulty') || 'intermediate',
-    learning_time: formData.get('learningTime') || '10 mins',
-    pdf_url,
-    thumbnail_url
-  }]);
-
-  if (error) throw error;
-  return data;
+  const res = await fetch('/api/upload/technique-drill', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: formData
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
 export async function uploadBeginnerPlan(planData: any, token: string) {
-  const authClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
-  );
-
-  const { data, error } = await authClient.from('beginner_plans').insert([{
-    title: planData.title,
-    duration: planData.duration,
-    level: planData.level,
-    description: planData.description || null,
-    lessons: planData.lessons || [],
-    learning_time: planData.learningTime || '1 week'
-  }]);
-
-  if (error) throw error;
-  return data;
+  const res = await fetch('/api/upload/beginner-plan', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(planData)
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
 export async function incrementVideoPlay(id: string) {

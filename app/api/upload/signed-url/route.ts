@@ -20,19 +20,12 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
-        const body = await req.json();
+        const { path } = await req.json();
 
-        const { data, error } = await supabase.from('sheet_music').insert([{
-            title: body.title,
-            description: body.description || null,
-            tags: body.tags || [],
-            difficulty: body.difficulty || 'beginner',
-            learning_time: body.learningTime || '10 mins',
-            pdf_url: body.pdf_url
-        }]).select().single();
-
+        const { data, error } = await supabase.storage.from('content').createSignedUploadUrl(path);
         if (error) throw error;
-        return NextResponse.json(data);
+
+        return NextResponse.json({ signedUrl: data.signedUrl, token: data.token, path: data.path });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }

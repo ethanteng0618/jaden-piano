@@ -20,35 +20,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
-        const formData = await req.formData();
-        const pdfFile = formData.get('pdf') as File;
-        const thumbnailFile = formData.get('thumbnail') as File;
-
-        let pdf_url = '';
-        let thumbnail_url = null;
-
-        if (pdfFile) {
-            const ext = pdfFile.name.split('.').pop();
-            const { data, error } = await supabase.storage.from('content').upload(`drills/${Date.now()}-${Math.random()}.${ext}`, pdfFile);
-            if (error) throw error;
-            pdf_url = supabase.storage.from('content').getPublicUrl(data.path).data.publicUrl;
-        }
-
-        if (thumbnailFile) {
-            const ext = thumbnailFile.name.split('.').pop();
-            const { data, error } = await supabase.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
-            if (error) throw error;
-            thumbnail_url = supabase.storage.from('content').getPublicUrl(data.path).data.publicUrl;
-        }
+        const body = await req.json();
 
         const { data, error } = await supabase.from('technique_drills').insert([{
-            title: formData.get('title'),
-            description: formData.get('description') || null,
-            tags: JSON.parse(formData.get('tags') as string || '[]'),
-            difficulty: formData.get('difficulty') || 'intermediate',
-            learning_time: formData.get('learningTime') || '10 mins',
-            pdf_url,
-            thumbnail_url
+            title: body.title,
+            description: body.description || null,
+            tags: body.tags || [],
+            difficulty: body.difficulty || 'intermediate',
+            learning_time: body.learningTime || '10 mins',
+            pdf_url: body.pdf_url,
+            thumbnail_url: body.thumbnail_url || null
         }]).select().single();
 
         if (error) throw error;

@@ -20,36 +20,17 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
-        const formData = await req.formData();
-        const videoFile = formData.get('video') as File;
-        const thumbnailFile = formData.get('thumbnail') as File;
-
-        let video_url = '';
-        let thumbnail_url = null;
-
-        if (videoFile) {
-            const ext = videoFile.name.split('.').pop();
-            const { data, error } = await supabase.storage.from('content').upload(`videos/${Date.now()}-${Math.random()}.${ext}`, videoFile);
-            if (error) throw error;
-            video_url = supabase.storage.from('content').getPublicUrl(data.path).data.publicUrl;
-        }
-
-        if (thumbnailFile) {
-            const ext = thumbnailFile.name.split('.').pop();
-            const { data, error } = await supabase.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
-            if (error) throw error;
-            thumbnail_url = supabase.storage.from('content').getPublicUrl(data.path).data.publicUrl;
-        }
+        const body = await req.json();
 
         const { data, error } = await supabase.from('videos').insert([{
-            title: formData.get('title'),
-            description: formData.get('description') || null,
-            tags: JSON.parse(formData.get('tags') as string || '[]'),
-            aspect_ratio: formData.get('aspectRatio') || 'video',
-            difficulty: formData.get('difficulty') || 'beginner',
-            learning_time: formData.get('learningTime') || '10 mins',
-            video_url,
-            thumbnail_url
+            title: body.title,
+            description: body.description || null,
+            tags: body.tags || [],
+            aspect_ratio: body.aspectRatio || 'video',
+            difficulty: body.difficulty || 'beginner',
+            learning_time: body.learningTime || '10 mins',
+            video_url: body.video_url,
+            thumbnail_url: body.thumbnail_url || null
         }]).select().single();
 
         if (error) throw error;

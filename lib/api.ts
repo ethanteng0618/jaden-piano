@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { createClient } from '@supabase/supabase-js'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
@@ -55,6 +56,12 @@ export async function fetchBeginnerPlans() {
 }
 
 export async function uploadVideo(formData: FormData, token: string) {
+  const authClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  );
+
   const videoFile = formData.get('video') as File;
   const thumbnailFile = formData.get('thumbnail') as File;
 
@@ -63,19 +70,19 @@ export async function uploadVideo(formData: FormData, token: string) {
 
   if (videoFile) {
     const ext = videoFile.name.split('.').pop();
-    const { data: vData, error: vErr } = await supabase.storage.from('content').upload(`videos/${Date.now()}-${Math.random()}.${ext}`, videoFile);
+    const { data: vData, error: vErr } = await authClient.storage.from('content').upload(`videos/${Date.now()}-${Math.random()}.${ext}`, videoFile);
     if (vErr) throw vErr;
-    video_url = supabase.storage.from('content').getPublicUrl(vData.path).data.publicUrl;
+    video_url = authClient.storage.from('content').getPublicUrl(vData.path).data.publicUrl;
   }
 
   if (thumbnailFile) {
     const ext = thumbnailFile.name.split('.').pop();
-    const { data: tData, error: tErr } = await supabase.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
+    const { data: tData, error: tErr } = await authClient.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
     if (tErr) throw tErr;
-    thumbnail_url = supabase.storage.from('content').getPublicUrl(tData.path).data.publicUrl;
+    thumbnail_url = authClient.storage.from('content').getPublicUrl(tData.path).data.publicUrl;
   }
 
-  const { data, error } = await supabase.from('videos').insert([{
+  const { data, error } = await authClient.from('videos').insert([{
     title: formData.get('title'),
     description: formData.get('description') || null,
     tags: JSON.parse(formData.get('tags') as string || '[]'),
@@ -91,17 +98,23 @@ export async function uploadVideo(formData: FormData, token: string) {
 }
 
 export async function uploadSheetMusic(formData: FormData, token: string) {
+  const authClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  );
+
   const pdfFile = formData.get('pdf') as File;
   let pdf_url = '';
 
   if (pdfFile) {
     const ext = pdfFile.name.split('.').pop();
-    const { data: pData, error: pErr } = await supabase.storage.from('content').upload(`sheet-music/${Date.now()}-${Math.random()}.${ext}`, pdfFile);
+    const { data: pData, error: pErr } = await authClient.storage.from('content').upload(`sheet-music/${Date.now()}-${Math.random()}.${ext}`, pdfFile);
     if (pErr) throw pErr;
-    pdf_url = supabase.storage.from('content').getPublicUrl(pData.path).data.publicUrl;
+    pdf_url = authClient.storage.from('content').getPublicUrl(pData.path).data.publicUrl;
   }
 
-  const { data, error } = await supabase.from('sheet_music').insert([{
+  const { data, error } = await authClient.from('sheet_music').insert([{
     title: formData.get('title'),
     description: formData.get('description') || null,
     tags: JSON.parse(formData.get('tags') as string || '[]'),
@@ -115,6 +128,12 @@ export async function uploadSheetMusic(formData: FormData, token: string) {
 }
 
 export async function uploadTechniqueDrill(formData: FormData, token: string) {
+  const authClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  );
+
   const pdfFile = formData.get('pdf') as File;
   const thumbnailFile = formData.get('thumbnail') as File;
 
@@ -123,19 +142,19 @@ export async function uploadTechniqueDrill(formData: FormData, token: string) {
 
   if (pdfFile) {
     const ext = pdfFile.name.split('.').pop();
-    const { data: pData, error: pErr } = await supabase.storage.from('content').upload(`drills/${Date.now()}-${Math.random()}.${ext}`, pdfFile);
+    const { data: pData, error: pErr } = await authClient.storage.from('content').upload(`drills/${Date.now()}-${Math.random()}.${ext}`, pdfFile);
     if (pErr) throw pErr;
-    pdf_url = supabase.storage.from('content').getPublicUrl(pData.path).data.publicUrl;
+    pdf_url = authClient.storage.from('content').getPublicUrl(pData.path).data.publicUrl;
   }
 
   if (thumbnailFile) {
     const ext = thumbnailFile.name.split('.').pop();
-    const { data: tData, error: tErr } = await supabase.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
+    const { data: tData, error: tErr } = await authClient.storage.from('content').upload(`thumbnails/${Date.now()}-${Math.random()}.${ext}`, thumbnailFile);
     if (tErr) throw tErr;
-    thumbnail_url = supabase.storage.from('content').getPublicUrl(tData.path).data.publicUrl;
+    thumbnail_url = authClient.storage.from('content').getPublicUrl(tData.path).data.publicUrl;
   }
 
-  const { data, error } = await supabase.from('technique_drills').insert([{
+  const { data, error } = await authClient.from('technique_drills').insert([{
     title: formData.get('title'),
     description: formData.get('description') || null,
     tags: JSON.parse(formData.get('tags') as string || '[]'),
@@ -150,7 +169,13 @@ export async function uploadTechniqueDrill(formData: FormData, token: string) {
 }
 
 export async function uploadBeginnerPlan(planData: any, token: string) {
-  const { data, error } = await supabase.from('beginner_plans').insert([{
+  const authClient = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  );
+
+  const { data, error } = await authClient.from('beginner_plans').insert([{
     title: planData.title,
     duration: planData.duration,
     level: planData.level,

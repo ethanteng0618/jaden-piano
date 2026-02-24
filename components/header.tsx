@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useState, useEffect } from 'react'
-import { Piano, Settings } from 'lucide-react'
+import { Piano, Settings, Menu, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 export function Header() {
   const [user, setUser] = useState<any>(null)
   const [isOwner, setIsOwner] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -84,32 +85,79 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <div className="hidden md:flex items-center gap-2">
+            {user ? (
+              <>
+                {isOwner && (
+                  <Link href="/admin">
+                    <Button variant="ghost" size="sm">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
+                <Avatar className="h-9 w-9 cursor-pointer" onClick={() => router.push('/profile')}>
+                  <AvatarImage src={user.user_metadata?.avatar_url} alt="User" />
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Button onClick={handleSignOut} size="sm" variant="ghost" className="rounded-full">
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => router.push('/auth')} size="sm" className="rounded-full">
+                Sign In
+              </Button>
+            )}
+          </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden"
+          >
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 w-full bg-background border-b border-border/40 shadow-lg p-4 flex flex-col gap-4 z-50 animate-in slide-in-from-top-4">
+          <Link href="/sheet-music" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">Sheet Music</Link>
+          <Link href="/technique-drills" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">Technique Drills</Link>
+          <Link href="/beginner-plans" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">Beginner Plans</Link>
+          <Link href="/video-tutorials" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">Video Tutorials</Link>
+          {isOwner && (
+            <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">Admin</Link>
+          )}
+
+          <div className="h-px bg-border/40 my-2" />
+
           {user ? (
-            <>
-              {isOwner && (
-                <Link href="/admin">
-                  <Button variant="ghost" size="sm">
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                </Link>
-              )}
-              <Avatar className="h-9 w-9 cursor-pointer" onClick={() => router.push('/profile')}>
-                <AvatarImage src={user.user_metadata?.avatar_url} alt="User" />
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {user.email?.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <Button onClick={handleSignOut} size="sm" variant="ghost" className="rounded-full">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={user.user_metadata?.avatar_url} alt="User" />
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {user.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">My Profile</Link>
+              </div>
+              <Button onClick={() => { setIsMobileMenuOpen(false); handleSignOut(); }} variant="secondary" className="w-full">
                 Sign Out
               </Button>
-            </>
+            </div>
           ) : (
-            <Button onClick={() => router.push('/auth')} size="sm" className="rounded-full">
+            <Button onClick={() => { setIsMobileMenuOpen(false); router.push('/auth'); }} className="w-full">
               Sign In
             </Button>
           )}
         </div>
-      </div>
+      )}
     </header>
   )
 }

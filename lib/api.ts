@@ -1,27 +1,57 @@
+import { supabase } from './supabase'
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
 
 export async function fetchVideos() {
-  const res = await fetch(`${API_URL}/api/videos`)
-  if (!res.ok) throw new Error('Failed to fetch videos')
-  return res.json()
+  const { data, error } = await supabase
+    .from('videos')
+    .select('*, saved_videos(count)')
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data.map((item: any) => ({
+    ...item,
+    saves_count: item.saved_videos?.[0]?.count || 0,
+    saved_videos: undefined
+  }))
 }
 
 export async function fetchSheetMusic() {
-  const res = await fetch(`${API_URL}/api/sheet-music`)
-  if (!res.ok) throw new Error('Failed to fetch sheet music')
-  return res.json()
+  const { data, error } = await supabase
+    .from('sheet_music')
+    .select('*, saved_sheet_music(count)')
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data.map((item: any) => ({
+    ...item,
+    saves_count: item.saved_sheet_music?.[0]?.count || 0,
+    saved_sheet_music: undefined
+  }))
 }
 
 export async function fetchTechniqueDrills() {
-  const res = await fetch(`${API_URL}/api/technique-drills`)
-  if (!res.ok) throw new Error('Failed to fetch technique drills')
-  return res.json()
+  const { data, error } = await supabase
+    .from('technique_drills')
+    .select('*, saved_technique_drills(count)')
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data.map((item: any) => ({
+    ...item,
+    saves_count: item.saved_technique_drills?.[0]?.count || 0,
+    saved_technique_drills: undefined
+  }))
 }
 
 export async function fetchBeginnerPlans() {
-  const res = await fetch(`${API_URL}/api/beginner-plans`)
-  if (!res.ok) throw new Error('Failed to fetch beginner plans')
-  return res.json()
+  const { data, error } = await supabase
+    .from('beginner_plans')
+    .select('*')
+    .order('duration', { ascending: true })
+
+  if (error) throw error
+  return data
 }
 
 export async function uploadVideo(formData: FormData, token: string) {
@@ -57,7 +87,7 @@ export async function uploadTechniqueDrill(formData: FormData, token: string) {
 export async function uploadBeginnerPlan(data: any, token: string) {
   const res = await fetch(`${API_URL}/api/upload/beginner-plan`, {
     method: 'POST',
-    headers: { 
+    headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
@@ -69,21 +99,21 @@ export async function uploadBeginnerPlan(data: any, token: string) {
 
 export async function incrementVideoPlay(id: string) {
   try {
-    const res = await fetch(`${API_URL}/api/videos/${id}/play`, { method: 'POST' })
-    if (!res.ok) console.error('Failed to increment play count')
+    const { error } = await supabase.rpc('increment_video_play', { row_id: id })
+    if (error) console.error('Failed to increment play count')
   } catch (e) { console.error(e) }
 }
 
 export async function incrementSheetMusicPlay(id: string) {
   try {
-    const res = await fetch(`${API_URL}/api/sheet-music/${id}/play`, { method: 'POST' })
-    if (!res.ok) console.error('Failed to increment play count')
+    const { error } = await supabase.rpc('increment_sheet_music_play', { row_id: id })
+    if (error) console.error('Failed to increment play count')
   } catch (e) { console.error(e) }
 }
 
 export async function incrementTechniqueDrillPlay(id: string) {
   try {
-    const res = await fetch(`${API_URL}/api/technique-drills/${id}/play`, { method: 'POST' })
-    if (!res.ok) console.error('Failed to increment play count')
+    const { error } = await supabase.rpc('increment_technique_drill_play', { row_id: id })
+    if (error) console.error('Failed to increment play count')
   } catch (e) { console.error(e) }
 }

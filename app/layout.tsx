@@ -34,7 +34,7 @@ export default function RootLayout({
       <body className={`${fontSans.variable} ${fontSerif.variable} font-sans antialiased text-foreground selection:bg-primary/30 selection:text-primary-foreground`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

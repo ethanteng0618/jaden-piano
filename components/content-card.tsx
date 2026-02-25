@@ -4,9 +4,10 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { SpotlightCard } from '@/components/spotlight-card'
-import { Star, Download, Trash2, Play } from 'lucide-react'
+import { Star, Download, Trash2, Play, LogIn } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { VideoModal, isYouTubeUrl } from '@/components/video-modal'
+import { useRouter } from 'next/navigation'
 
 interface ContentCardProps {
   id?: string
@@ -26,6 +27,7 @@ interface ContentCardProps {
   difficulty?: 'beginner' | 'intermediate' | 'advanced'
   learningTime?: string
   learning_time?: string
+  isLoggedIn?: boolean
 }
 
 export function ContentCard({
@@ -45,8 +47,10 @@ export function ContentCard({
   onPlay,
   difficulty,
   learningTime,
-  learning_time
+  learning_time,
+  isLoggedIn = true
 }: ContentCardProps) {
+  const router = useRouter()
   const displayLearningTime = learningTime || learning_time
   const [isDeleting, setIsDeleting] = useState(false)
   // Optimistic UI for saves
@@ -184,7 +188,16 @@ export function ContentCard({
           </CardContent>
 
           <CardFooter className="p-5 pt-0">
-            {downloadUrl ? (
+            {!isLoggedIn ? (
+              <Button
+                className="w-full rounded-full font-medium shadow-none hover:shadow-md transition-all"
+                variant="outline"
+                onClick={() => router.push('/auth')}
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                {type === 'video' ? 'Sign In to Watch' : 'Sign In to Download'}
+              </Button>
+            ) : downloadUrl ? (
               <Button
                 className="w-full rounded-full font-medium shadow-none hover:shadow-md transition-all"
                 variant="outline"

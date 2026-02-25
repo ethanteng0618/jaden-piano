@@ -170,6 +170,7 @@ export default function VideoTutorialsPage() {
                   learningTime={video.learning_time}
                   onToggleSave={() => handleToggleSave(video)}
                   onPlay={() => handlePlay(video.id)}
+                  isLoggedIn={!!user}
                 />
               ))}
               {videos.length === 0 && (

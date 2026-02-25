@@ -5,16 +5,19 @@ import { Footer } from '@/components/footer'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle2, Clock, Trash2 } from 'lucide-react'
+import { CheckCircle2, Clock, Trash2, LogIn } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { fetchBeginnerPlans } from '@/lib/api'
 import { supabase } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 
 export default function BeginnerPlansPage() {
   const [plans, setPlans] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
   const [token, setToken] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     checkOwner()
@@ -25,6 +28,7 @@ export default function BeginnerPlansPage() {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
 
+    setIsLoggedIn(true)
     setToken(session.access_token)
 
     const isEnvOwner = session.user.email === process.env.NEXT_PUBLIC_OWNER_EMAIL?.trim().toLowerCase()
@@ -122,9 +126,20 @@ export default function BeginnerPlansPage() {
                     </div>
                   </CardContent>
                   <CardFooter className="pb-6">
-                    <Button className="w-full rounded-full h-11 text-base shadow-sm">
-                      Start This Plan
-                    </Button>
+                    {isLoggedIn ? (
+                      <Button className="w-full rounded-full h-11 text-base shadow-sm">
+                        Start This Plan
+                      </Button>
+                    ) : (
+                      <Button
+                        className="w-full rounded-full h-11 text-base shadow-sm"
+                        variant="outline"
+                        onClick={() => router.push('/auth')}
+                      >
+                        <LogIn className="h-4 w-4 mr-2" />
+                        Sign In to Start
+                      </Button>
+                    )}
                   </CardFooter>
                 </Card>
               ))}

@@ -200,6 +200,7 @@ export default function TechniqueDrillsPage() {
                       learningTime={drill.learning_time}
                       onToggleSave={() => handleToggleSave(drill)}
                       onPlay={() => handlePlay(drill.id)}
+                      isLoggedIn={!!user}
                     />
                   ))}
                   {categorizedDrills.fingerDexterity.length === 0 && (
@@ -230,6 +231,7 @@ export default function TechniqueDrillsPage() {
                       learningTime={drill.learning_time}
                       onToggleSave={() => handleToggleSave(drill)}
                       onPlay={() => handlePlay(drill.id)}
+                      isLoggedIn={!!user}
                     />
                   ))}
                   {categorizedDrills.octaveJumps.length === 0 && (
@@ -260,6 +262,7 @@ export default function TechniqueDrillsPage() {
                       learningTime={drill.learning_time}
                       onToggleSave={() => handleToggleSave(drill)}
                       onPlay={() => handlePlay(drill.id)}
+                      isLoggedIn={!!user}
                     />
                   ))}
                   {categorizedDrills.scales.length === 0 && (

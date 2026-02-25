@@ -12,10 +12,18 @@ import { ArrowRight } from 'lucide-react'
 
 import { useEffect, useState } from 'react'
 import { fetchVideos, fetchSheetMusic, fetchTechniqueDrills, fetchBeginnerPlans } from '@/lib/api'
+import { supabase } from '@/lib/supabase'
 
 export default function Home() {
   const [featuredContent, setFeaturedContent] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session?.user)
+    })
+  }, [])
 
   useEffect(() => {
     async function loadContent() {
@@ -85,6 +93,7 @@ export default function Home() {
                   {...content}
                   // Ensure correct props mapping if needed
                   thumbnail={content.thumbnail_url}
+                  isLoggedIn={isLoggedIn}
                 />
               ))
             )}

@@ -192,6 +192,7 @@ export default function SheetMusicPage() {
                   learningTime={sheet.learning_time}
                   onToggleSave={() => handleToggleSave(sheet)}
                   onPlay={() => handlePlay(sheet.id)}
+                  isLoggedIn={!!user}
                 />
               ))}
               {filteredMusic.length === 0 && (

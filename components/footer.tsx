@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Instagram, Mail, Music } from 'lucide-react'
+import { Instagram, Mail, Music, Linkedin } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -24,6 +24,15 @@ export function Footer() {
             >
               <Instagram className="h-5 w-5" />
               <span className="sr-only">Instagram</span>
+            </Link>
+            <Link
+              href="https://www.linkedin.com/in/jaden-shia-41b704358/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground/60 hover:text-primary transition-colors"
+            >
+              <Linkedin className="h-5 w-5" />
+              <span className="sr-only">LinkedIn</span>
             </Link>
             <Link
               href="mailto:jadenshia34@gmail.com"

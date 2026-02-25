@@ -36,7 +36,7 @@ export default function ProfilePage() {
           .select('sheet_music_id, sheet_music(*)')
           .eq('user_id', session.user.id)
 
-        const normalizedVideos = (savedVids || []).map((v: any) => ({ ...v.videos, type: 'video', aspectRatio: 'video' }))
+        const normalizedVideos = (savedVids || []).map((v: any) => ({ ...v.videos, type: 'video', aspectRatio: 'video', downloadUrl: v.videos?.video_url }))
         const normalizedSheets = (savedSheets || []).map((s: any) => ({ ...s.sheet_music, type: 'pdf', downloadUrl: s.sheet_music.pdf_url }))
 
         // Combine

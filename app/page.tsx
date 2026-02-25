@@ -28,7 +28,7 @@ export default function Home() {
         ])
 
         // Normalize data for display
-        const normalizedVideos = videos.map((v: any) => ({ ...v, type: 'video', aspectRatio: 'video' }))
+        const normalizedVideos = videos.map((v: any) => ({ ...v, type: 'video', aspectRatio: 'video', downloadUrl: v.video_url }))
         const normalizedSheets = sheetMusic.map((s: any) => ({ ...s, type: 'pdf', downloadUrl: s.pdf_url }))
         const normalizedDrills = drills.map((d: any) => ({ ...d, type: 'pdf', downloadUrl: d.pdf_url }))
         const normalizedPlans = plans.map((p: any) => ({ ...p, type: 'plan', description: p.description })) // Plans might need special card handling or just basic info

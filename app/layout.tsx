@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { GridBackground } from '@/components/grid-background'
 import { ThemeProvider } from '@/components/theme-provider'
+import { AuthHandler } from '@/components/auth-handler'
 import './globals.css'
 
 const fontSans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
@@ -37,6 +38,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <AuthHandler />
           <GridBackground />
           {children}
           <Analytics />

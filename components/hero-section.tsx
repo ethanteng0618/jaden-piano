@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { BlurText } from '@/components/blur-text'
 import { ShinyText } from '@/components/shiny-text'
-import { Magnet } from '@/components/magnet'
 import { motion } from 'framer-motion'
 import { HeroAurora } from '@/components/hero-aurora'
 import { MusicThemeBg } from '@/components/music-theme-bg'
@@ -35,18 +34,14 @@ export function HeroSection() {
 
             <div className="flex flex-wrap gap-4 pt-2">
               <Link href="/video-tutorials">
-                <Magnet padding={50} magnetStrength={3}>
-                  <Button size="lg" className="rounded-full h-14 px-8 text-base shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow">
-                    Start Learning
-                  </Button>
-                </Magnet>
+                <Button size="lg" className="rounded-full h-14 px-8 text-base shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 hover:scale-105 transition-all duration-300">
+                  Start Learning
+                </Button>
               </Link>
               <Link href="/video-tutorials">
-                <Magnet padding={50} magnetStrength={3}>
-                  <Button variant="outline" size="lg" className="rounded-full h-14 px-8 text-base border-2 hover:bg-muted/50">
-                    Browse Videos
-                  </Button>
-                </Magnet>
+                <Button variant="outline" size="lg" className="rounded-full h-14 px-8 text-base border-2 hover:bg-muted/50 hover:-translate-y-1 hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                  Browse Videos
+                </Button>
               </Link>
             </div>
 

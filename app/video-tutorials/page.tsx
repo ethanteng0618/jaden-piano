@@ -2,6 +2,7 @@
 
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { VideoTutorialsBg } from '@/components/theme-accents'
 import { ContentCard } from '@/components/content-card'
 import { DifficultyLegend } from '@/components/difficulty-legend'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -136,8 +137,9 @@ export default function VideoTutorialsPage() {
     <>
       <Header />
       <main className="min-h-screen">
-        <section className="bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
-          <div className="container mx-auto px-4">
+        <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
+          <VideoTutorialsBg />
+          <div className="relative z-10 container mx-auto px-4">
             <h1 className="text-4xl md:text-5xl font-sans font-bold mb-4 text-balance">Video Tutorials</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mb-8">
               Learn from j8den&apos;s comprehensive video lessons and TikTok-style quick tips

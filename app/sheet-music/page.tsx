@@ -2,6 +2,7 @@
 
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SheetMusicBg } from '@/components/theme-accents'
 import { ContentCard } from '@/components/content-card'
 import { DifficultyLegend } from '@/components/difficulty-legend'
 import { Input } from '@/components/ui/input'
@@ -150,8 +151,9 @@ export default function SheetMusicPage() {
     <>
       <Header />
       <main className="min-h-screen">
-        <section className="bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
-          <div className="container mx-auto px-4">
+        <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
+          <SheetMusicBg />
+          <div className="relative z-10 container mx-auto px-4">
             <h1 className="text-4xl md:text-5xl font-sans font-bold mb-4 text-balance">Sheet Music Library</h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl">
               Download professionally arranged sheet music for all skill levels

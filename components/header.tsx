@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useState, useEffect } from 'react'
-import { Piano, Settings, Menu, X } from 'lucide-react'
+import { Piano, Settings, Menu, X, User } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -60,17 +60,17 @@ export function Header() {
           <span className="text-foreground">j8den.shia</span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
-          <Link href="/sheet-music" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+        <nav className="hidden md:flex items-center gap-6" id="tour-nav">
+          <Link id="tour-sheet-music" href="/sheet-music" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
             Sheet Music
           </Link>
-          <Link href="/technique-drills" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+          <Link id="tour-drills" href="/technique-drills" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
             Technique Drills
           </Link>
-          <Link href="/beginner-plans" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+          <Link id="tour-plans" href="/beginner-plans" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
             Beginner Plans
           </Link>
-          <Link href="/video-tutorials" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+          <Link id="tour-videos" href="/video-tutorials" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
             Video Tutorials
           </Link>
           {isOwner && (
@@ -78,7 +78,7 @@ export function Header() {
               Admin
             </Link>
           )}
-          <Link href="/profile" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+          <Link id="tour-profile" href="/profile" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
             My Profile
           </Link>
         </nav>
@@ -96,9 +96,8 @@ export function Header() {
                   </Link>
                 )}
                 <Avatar className="h-9 w-9 cursor-pointer" onClick={() => router.push('/profile')}>
-                  <AvatarImage src={user.user_metadata?.avatar_url} alt="User" />
                   <AvatarFallback className="bg-primary text-primary-foreground">
-                    {user.email?.charAt(0).toUpperCase()}
+                    <User className="h-5 w-5" />
                   </AvatarFallback>
                 </Avatar>
                 <Button onClick={handleSignOut} size="sm" variant="ghost" className="rounded-full">
@@ -140,9 +139,8 @@ export function Header() {
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={user.user_metadata?.avatar_url} alt="User" />
                   <AvatarFallback className="bg-primary text-primary-foreground">
-                    {user.email?.charAt(0).toUpperCase()}
+                    <User className="h-6 w-6" />
                   </AvatarFallback>
                 </Avatar>
                 <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-medium hover:text-primary transition-colors">My Profile</Link>

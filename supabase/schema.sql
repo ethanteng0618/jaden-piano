@@ -66,6 +66,7 @@ ALTER TABLE technique_drills ENABLE ROW LEVEL SECURITY;
 ALTER TABLE beginner_plans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING ( auth.uid() = id );
+CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING ( auth.uid() = id );
 
 -- Public read access for all content
 CREATE POLICY "Public can view videos" ON videos FOR SELECT USING (true);

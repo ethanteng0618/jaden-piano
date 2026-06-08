@@ -43,9 +43,17 @@ export function Footer() {
             </Link>
           </div>
 
-          <p className="text-sm text-muted-foreground text-center">
-            © 2026 j8den.shia
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-muted-foreground">
+            <Link href="/terms" className="hover:text-primary transition-colors underline-offset-4 hover:underline">
+              Terms of Service
+            </Link>
+            <span>&bull;</span>
+            <Link href="/privacy" className="hover:text-primary transition-colors underline-offset-4 hover:underline">
+              Privacy Policy
+            </Link>
+            <span>&bull;</span>
+            <p>© 2026 j8den.shia</p>
+          </div>
           <p className="text-sm text-muted-foreground text-center">
             Made by <a href="https://www.linkedin.com/in/ethan-teng-952149235/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors underline underline-offset-4">Ethan Teng</a>
           </p>

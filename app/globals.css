@@ -129,3 +129,70 @@
 .animate-shine {
   animation: shine var(--animation-duration, 3s) linear infinite;
 }
+
+/* Driver.js Theme Overrides */
+.driver-popover {
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  font-family: var(--font-sans), sans-serif !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.driver-popover-title {
+  font-family: var(--font-serif), serif !important;
+  color: var(--foreground) !important;
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.driver-popover-description {
+  color: var(--muted-foreground) !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+}
+
+.driver-popover-footer {
+  margin-top: 1rem !important;
+}
+
+.driver-popover-footer button {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border: none !important;
+  border-radius: calc(var(--radius) - 6px) !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1rem !important;
+  text-shadow: none !important;
+  transition: opacity 0.2s !important;
+}
+
+.driver-popover-footer button:hover {
+  opacity: 0.85 !important;
+}
+
+.driver-popover-footer .driver-popover-prev-btn {
+  background-color: var(--secondary) !important;
+  color: var(--secondary-foreground) !important;
+}
+
+.driver-popover-progress-text {
+  color: var(--muted-foreground) !important;
+  font-weight: 500 !important;
+}
+
+/* Fix arrow colors based on placement */
+.driver-popover-arrow-side-left .driver-popover-arrow {
+  border-right-color: var(--card) !important;
+}
+.driver-popover-arrow-side-right .driver-popover-arrow {
+  border-left-color: var(--card) !important;
+}
+.driver-popover-arrow-side-top .driver-popover-arrow {
+  border-bottom-color: var(--card) !important;
+}
+.driver-popover-arrow-side-bottom .driver-popover-arrow {
+  border-top-color: var(--card) !important;
+}

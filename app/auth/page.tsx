@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useRouter } from 'next/navigation'
 
 export default function AuthPage() {
@@ -14,6 +15,7 @@ export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isOfAge, setIsOfAge] = useState(false)
   const router = useRouter()
 
   async function handleAuth(e: React.FormEvent) {
@@ -23,6 +25,10 @@ export default function AuthPage() {
 
     try {
       if (isSignUp) {
+        if (!isOfAge) {
+          throw new Error('You must be 13 or older and agree to the Terms of Service and Privacy Policy to sign up.')
+        }
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -78,6 +84,18 @@ export default function AuthPage() {
                 required
               />
             </div>
+            {isSignUp && (
+              <div className="flex items-center space-x-3 py-2">
+                <Checkbox 
+                  id="age-gate" 
+                  checked={isOfAge} 
+                  onCheckedChange={(checked) => setIsOfAge(checked as boolean)} 
+                />
+                <Label htmlFor="age-gate" className="text-sm font-normal leading-tight">
+                  I am at least 13 years old and agree to the <a href="/terms" className="text-primary hover:underline font-medium" target="_blank">Terms of Service</a> and <a href="/privacy" className="text-primary hover:underline font-medium" target="_blank">Privacy Policy</a>.
+                </Label>
+              </div>
+            )}
             {error && (
               <div className="text-sm text-destructive">{error}</div>
             )}

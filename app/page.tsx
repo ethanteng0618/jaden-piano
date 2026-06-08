@@ -13,11 +13,27 @@ import { ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { fetchVideos, fetchSheetMusic, fetchTechniqueDrills, fetchBeginnerPlans } from '@/lib/api'
 import { supabase } from '@/lib/supabase'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
 
 export default function Home() {
   const [featuredContent, setFeaturedContent] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const startTour = () => {
+    const tourDriver = driver({
+      showProgress: true,
+      steps: [
+        { element: '#tour-nav', popover: { title: 'Welcome!', description: 'Let us take a quick tour of the features available to you.' } },
+        { element: '#tour-sheet-music', popover: { title: 'Sheet Music', description: 'Download exclusive sheet music directly to your device.' } },
+        { element: '#tour-drills', popover: { title: 'Technique Drills', description: 'Practice specialized drills designed to level up your technique.' } },
+        { element: '#tour-videos', popover: { title: 'Video Tutorials', description: 'Watch detailed breakdowns of songs and exercises.' } },
+        { element: '#tour-profile', popover: { title: 'My Profile', description: 'Access all your saved content and manage your account here.' } },
+      ]
+    });
+    tourDriver.drive();
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -114,11 +130,17 @@ export default function Home() {
                 Join thousands of piano enthusiasts learning from TikTok&apos;s <span className="text-foreground font-medium">j8den.shia</span>.
                 Get access to exclusive sheet music, structured lesson plans, and technique drills.
               </p>
-              <Link href="/video-tutorials">
-                <Button size="lg" className="rounded-full h-16 px-12 text-lg font-bold shadow-[0_0_40px_-10px_var(--primary)] hover:shadow-[0_0_60px_-10px_var(--primary)] hover:-translate-y-1 transition-all duration-300">
-                  Start Learning Today
+              {isLoggedIn ? (
+                <Button size="lg" onClick={startTour} className="rounded-full h-16 px-12 text-lg font-bold shadow-[0_0_40px_-10px_var(--primary)] hover:shadow-[0_0_60px_-10px_var(--primary)] hover:-translate-y-1 transition-all duration-300">
+                  Quick Tutorial
                 </Button>
-              </Link>
+              ) : (
+                <Link href="/auth">
+                  <Button size="lg" className="rounded-full h-16 px-12 text-lg font-bold shadow-[0_0_40px_-10px_var(--primary)] hover:shadow-[0_0_60px_-10px_var(--primary)] hover:-translate-y-1 transition-all duration-300">
+                    Start Learning Today
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </section>

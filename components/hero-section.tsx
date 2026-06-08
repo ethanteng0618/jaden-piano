@@ -7,11 +7,13 @@ import { ShinyText } from '@/components/shiny-text'
 import { Magnet } from '@/components/magnet'
 import { motion } from 'framer-motion'
 import { HeroAurora } from '@/components/hero-aurora'
+import { MusicThemeBg } from '@/components/music-theme-bg'
 
 export function HeroSection() {
   return (
     <section className="relative w-full py-20 lg:py-32 overflow-hidden">
       <HeroAurora />
+      <MusicThemeBg />
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
 
@@ -54,7 +56,7 @@ export function HeroSection() {
                   <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-muted" />
                 ))}
               </div>
-              <p className="text-sm font-medium">Join 80,000+ followers</p>
+              <p className="text-sm font-medium">Join 120,000+ followers</p>
             </div>
           </div>
 

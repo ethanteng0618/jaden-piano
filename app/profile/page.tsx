@@ -7,13 +7,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Upload, Settings } from 'lucide-react'
+import { Upload, Settings, User } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 export default function ProfilePage() {
   const [content, setContent] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
     async function loadSavedContent() {
@@ -22,6 +23,7 @@ export default function ProfilePage() {
         setLoading(false)
         return
       }
+      setUser(session.user)
 
       try {
         // Fetch saved videos
@@ -63,12 +65,13 @@ export default function ProfilePage() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               <Avatar className="h-24 w-24 border-4 border-background shadow-xl">
-                <AvatarImage src="/avatar.jpg" alt="User" />
-                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">JS</AvatarFallback>
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  <User className="h-12 w-12" />
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h1 className="text-4xl font-bold mb-2 tracking-tight">Jaden Shia</h1>
-                <p className="text-muted-foreground mb-4 text-lg">Piano Creator</p>
+                <h1 className="text-4xl font-bold mb-2 tracking-tight">{user?.email || 'Piano Student'}</h1>
+                <p className="text-muted-foreground mb-4 text-lg">Piano Learner</p>
               </div>
             </div>
           </div>

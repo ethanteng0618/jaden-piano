@@ -2,6 +2,7 @@
 
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { BeginnerPlansBg } from '@/components/theme-accents'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -77,8 +78,9 @@ export default function BeginnerPlansPage() {
     <>
       <Header />
       <main className="min-h-screen">
-        <section className="bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
-          <div className="container mx-auto px-4">
+        <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-transparent py-12 md:py-16">
+          <BeginnerPlansBg />
+          <div className="relative z-10 container mx-auto px-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">Beginner Plans</h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
               Structured learning paths designed to take you from zero to confident pianist

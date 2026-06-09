@@ -1,4 +1,6 @@
-import { Piano, ArrowRight, Music, Sparkles } from 'lucide-react'
+'use client'
+
+import { Piano, Music } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
@@ -10,88 +12,110 @@ import { MusicThemeBg } from '@/components/music-theme-bg'
 
 export function HeroSection() {
   return (
-    <section className="relative w-full py-20 lg:py-32 overflow-hidden">
+    <section className="relative w-full min-h-[90vh] py-24 lg:py-40 flex items-center overflow-hidden">
       <HeroAurora />
       <MusicThemeBg />
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-
-          {/* Left: Text Content */}
-          <div className="space-y-8 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-              <Sparkles className="h-4 w-4" />
-              <span>Elevate your playing</span>
-            </div>
-
-            <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-foreground font-serif leading-[1.1]">
+      
+      <div className="container mx-auto px-6 md:px-12 relative z-10 w-full max-w-7xl">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-12 items-center justify-between">
+          
+          {/* Left: Text Content - Ultra Wide */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="w-full lg:w-7/12 space-y-10 text-left relative z-20"
+          >
+            {/* The 2-Line Iron Rule Header */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter text-foreground font-serif leading-[1.05] max-w-3xl">
               <BlurText text="Master the Keys" animateBy="words" delay={100} /> <br />
-              <span className="text-primary italic">with Jaden.</span>
+              <span className="text-primary italic font-light tracking-normal">with Jaden.</span>
             </h1>
 
-            <p className="text-xl leading-relaxed max-w-lg">
+            <p className="text-xl md:text-2xl leading-relaxed max-w-2xl text-muted-foreground/90 font-light">
               <ShinyText text="Unlock your potential with techniques straight from my studio to yours. Modern pieces, classic foundations, and everything in between." speed={4} />
             </p>
 
-            <div className="flex flex-wrap gap-4 pt-2">
+            <div className="flex flex-wrap gap-6 pt-4">
               <Link href="/video-tutorials">
-                <Button size="lg" className="rounded-full h-14 px-8 text-base shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 hover:scale-105 transition-all duration-300">
+                <Button size="lg" className="rounded-full h-16 px-10 text-lg font-medium shadow-[0_0_30px_-5px_var(--primary)] hover:shadow-[0_0_50px_-5px_var(--primary)] hover:-translate-y-1 hover:scale-105 transition-all duration-500">
                   Start Learning
                 </Button>
               </Link>
               <Link href="/video-tutorials">
-                <Button variant="outline" size="lg" className="rounded-full h-14 px-8 text-base border-2 hover:bg-muted/50 hover:-translate-y-1 hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                <Button variant="outline" size="lg" className="rounded-full h-16 px-10 text-lg font-medium border-border/50 bg-background/30 backdrop-blur-sm hover:bg-muted/50 hover:-translate-y-1 hover:scale-105 transition-all duration-500 hover:shadow-xl">
                   Browse Videos
                 </Button>
               </Link>
             </div>
-
-            <div className="flex items-center gap-8 pt-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-              <div className="flex -space-x-4">
+            
+            {/* Join Count - Minimal */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1, duration: 1 }}
+              className="flex items-center gap-6 pt-12 opacity-50 hover:opacity-100 transition-opacity duration-500"
+            >
+              <div className="flex -space-x-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="h-10 w-10 rounded-full border-2 border-background bg-muted" />
+                  <div key={i} className="h-12 w-12 rounded-full border border-border/40 bg-card/80 backdrop-blur-md" />
                 ))}
               </div>
-              <p className="text-sm font-medium">Join 120,000+ followers</p>
-            </div>
-          </div>
+              <p className="text-sm font-medium tracking-wide uppercase">120,000+ Followers</p>
+            </motion.div>
+          </motion.div>
 
-          {/* Right: Visual Composition */}
-          <div className="relative">
-            {/* Decorative blob behind */}
-            <div className="absolute -top-20 -right-20 w-96 h-96 bg-primary/20 rounded-full blur-[100px] opacity-60" />
+          {/* Right: Floating Visuals - Artistic Asymmetry */}
+          <div className="w-full lg:w-5/12 relative min-h-[400px] flex justify-end items-center">
+            {/* Deep glow backdrop */}
+            <div className="absolute top-1/2 right-10 -translate-y-1/2 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] opacity-70 pointer-events-none" />
 
-            <div className="relative grid gap-6">
+            <div className="relative w-full max-w-md ml-auto">
+              {/* Floating Card 1 */}
               <motion.div
-                animate={{ y: [0, -15, 0], rotate: [2, 0, 2] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                whileHover={{ scale: 1.05, y: -10 }}
+                className="relative z-20 mb-8 -ml-12"
               >
-                <Card className="bg-background/80 backdrop-blur-md border-0 shadow-xl ring-1 ring-border/50 transition-transform duration-500">
-                  <CardContent className="p-6 flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                      <Music className="h-6 w-6" />
+                <Card className="bg-background/40 backdrop-blur-2xl border border-border/30 shadow-2xl overflow-hidden rounded-[2rem]">
+                  <CardContent className="p-8">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
+                        <Piano className="h-8 w-8 text-primary" strokeWidth={1.5} />
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-lg">Daily Practice Plans</h3>
-                      <p className="text-sm text-muted-foreground">Structured for consistency</p>
+                    <h3 className="text-3xl font-serif font-bold mb-3 tracking-tight">Technique &<br />Expression</h3>
+                    <p className="text-muted-foreground/80 mb-8 font-light text-lg">Master dynamics in modern pop.</p>
+                    <div className="h-1 w-full bg-border/40 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: "66%" }}
+                        transition={{ delay: 1.5, duration: 1.5, ease: "easeOut" }}
+                        className="h-full bg-primary rounded-full shadow-[0_0_10px_var(--primary)]" 
+                      />
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
 
+              {/* Floating Card 2 */}
               <motion.div
-                animate={{ y: [0, 15, 0], rotate: [-1, 1, -1] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="z-10 translate-x-8"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
+                whileHover={{ scale: 1.05, x: 10 }}
+                className="absolute -bottom-16 -right-8 w-3/4 z-30"
               >
-                <Card className="bg-background/90 backdrop-blur-md border-0 shadow-2xl ring-1 ring-border/50 transition-transform duration-500 hover:scale-105">
-                  <CardContent className="p-8">
-                    <div className="flex justify-between items-start mb-6">
-                      <Piano className="h-10 w-10 text-primary" strokeWidth={1.5} />
+                <Card className="bg-card/90 backdrop-blur-xl border border-border/20 shadow-2xl rounded-3xl overflow-hidden">
+                  <CardContent className="p-6 flex items-center gap-5">
+                    <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-[0_0_15px_var(--primary)]">
+                      <Music className="h-5 w-5" />
                     </div>
-                    <h3 className="text-2xl font-serif font-bold mb-2">Technique &<br />Expression</h3>
-                    <p className="text-muted-foreground mb-6">Mastering dynamics in modern pop songs.</p>
-                    <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
-                      <div className="h-full w-2/3 bg-primary rounded-full" />
+                    <div>
+                      <h3 className="font-bold text-lg tracking-tight">Daily Plans</h3>
+                      <p className="text-sm text-muted-foreground font-light">Structured practice</p>
                     </div>
                   </CardContent>
                 </Card>

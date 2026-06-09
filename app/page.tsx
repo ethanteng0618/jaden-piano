@@ -9,6 +9,7 @@ import { HeroAurora } from '@/components/hero-aurora'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 import { useEffect, useState } from 'react'
 import { fetchVideos, fetchSheetMusic, fetchTechniqueDrills, fetchBeginnerPlans } from '@/lib/api'
@@ -99,35 +100,54 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 grid-flow-dense mt-10">
             {loading ? (
-              <div className="col-span-full text-center py-12 text-muted-foreground">Loading featured content...</div>
+              <div className="col-span-full text-center py-12 text-muted-foreground font-light">Loading featured content...</div>
             ) : (
-              featuredContent.map((content) => (
-                <ContentCard
-                  key={content.id || content.title}
-                  {...content}
-                  // Ensure correct props mapping if needed
-                  thumbnail={content.thumbnail_url}
-                  isLoggedIn={isLoggedIn}
-                />
-              ))
+              featuredContent.map((content, idx) => {
+                let spanClass = "col-span-1 row-span-1";
+                if (idx === 0) spanClass = "md:col-span-2 md:row-span-2";
+                if (idx === 3 && featuredContent.length > 3) spanClass = "md:col-span-2 md:row-span-1";
+
+                return (
+                  <motion.div
+                    key={content.id || content.title}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.7, delay: idx * 0.15, ease: "easeOut" }}
+                    className={`${spanClass} h-full`}
+                  >
+                    <ContentCard
+                      {...content}
+                      thumbnail={content.thumbnail_url}
+                      isLoggedIn={isLoggedIn}
+                    />
+                  </motion.div>
+                )
+              })
             )}
             {!loading && featuredContent.length === 0 && (
-              <div className="col-span-full text-center py-12 text-muted-foreground">Check back soon for new content!</div>
+              <div className="col-span-full text-center py-12 text-muted-foreground font-light">Check back soon for new content!</div>
             )}
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-20">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-card/30 border border-border/50 shadow-2xl backdrop-blur-sm">
+        <section className="container mx-auto px-4 py-32">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="relative overflow-hidden rounded-[3rem] bg-card/10 border border-border/20 shadow-[0_0_100px_-20px_rgba(var(--primary),0.15)] backdrop-blur-2xl"
+          >
             <HeroAurora />
-            <div className="relative z-10 px-6 py-20 md:py-32 text-center max-w-4xl mx-auto">
-              <h2 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight font-sans">
+            <div className="relative z-10 px-8 py-24 md:py-40 text-center max-w-5xl mx-auto">
+              <h2 className="text-5xl md:text-7xl font-extrabold mb-8 tracking-tighter font-serif leading-tight">
                 Ready to Level Up?
               </h2>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-                Join thousands of piano enthusiasts learning from TikTok&apos;s <span className="text-foreground font-medium">j8den.shia</span>.
+              <p className="text-xl md:text-2xl text-muted-foreground/80 mb-14 max-w-3xl mx-auto leading-relaxed font-light">
+                Join thousands of piano enthusiasts learning from TikTok's <span className="text-foreground font-medium">j8den.shia</span>.
                 Get access to exclusive sheet music, structured lesson plans, and technique drills.
               </p>
               {isLoggedIn ? (
@@ -142,7 +162,7 @@ export default function Home() {
                 </Link>
               )}
             </div>
-          </div>
+          </motion.div>
         </section>
       </main>
       <Footer />

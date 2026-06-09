@@ -1,13 +1,13 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google'
+import { Outfit, Playfair_Display } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { GridBackground } from '@/components/grid-background'
 import { ThemeProvider } from '@/components/theme-provider'
 import { AuthHandler } from '@/components/auth-handler'
 import './globals.css'
 
-const fontSans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const fontSans = Outfit({ subsets: ["latin"], variable: "--font-sans" });
 const fontSerif = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata: Metadata = {

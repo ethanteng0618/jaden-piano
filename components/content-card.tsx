@@ -21,6 +21,7 @@ interface ContentCardProps {
   onDelete?: () => void
   plays?: number
   saves?: number
+  showSave?: boolean
   isSaved?: boolean
   onToggleSave?: () => void
   onPlay?: () => void
@@ -42,6 +43,7 @@ export function ContentCard({
   onDelete,
   plays = 0,
   saves = 0,
+  showSave = true,
   isSaved = false,
   onToggleSave,
   onPlay,
@@ -131,14 +133,14 @@ export function ContentCard({
                 <span>{plays}</span>
               </div>
 
-              <Button
+              {showSave && <Button
                 size="icon"
                 variant="secondary"
                 className="h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm"
                 onClick={handleToggleSave}
               >
                 <Star className={`h-4 w-4 ${currentSaved ? 'fill-primary text-primary' : 'text-foreground'}`} />
-              </Button>
+              </Button>}
 
               {isOwner && onDelete && (
                 <Button
@@ -181,9 +183,9 @@ export function ContentCard({
               <span className="flex items-center gap-1">
                 <Play className="h-3 w-3" /> {plays} plays
               </span>
-              <span className="flex items-center gap-1">
+              {showSave && <span className="flex items-center gap-1">
                 <Star className="h-3 w-3" /> {currentSavesCount} saves
-              </span>
+              </span>}
             </div>
           </CardContent>
 

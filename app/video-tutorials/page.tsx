@@ -16,7 +16,6 @@ export default function VideoTutorialsPage() {
   const [isOwner, setIsOwner] = useState(false)
   const [token, setToken] = useState('')
   const [user, setUser] = useState<any>(null)
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     checkOwnerAndUser()
@@ -29,16 +28,6 @@ export default function VideoTutorialsPage() {
 
     setUser(session.user)
     setToken(session.access_token)
-
-    // Check user saves
-    const { data: savedData } = await supabase
-      .from('saved_videos')
-      .select('video_id')
-      .eq('user_id', session.user.id)
-
-    if (savedData) {
-      setSavedIds(new Set(savedData.map((d: any) => d.video_id)))
-    }
 
     const isEnvOwner = session.user.email === process.env.NEXT_PUBLIC_OWNER_EMAIL?.trim().toLowerCase()
 
@@ -77,53 +66,6 @@ export default function VideoTutorialsPage() {
     } catch (error) {
       alert('Error deleting video')
       console.error(error)
-    }
-  }
-
-  async function handleToggleSave(video: any) {
-    if (!user) {
-      alert('Please log in to save videos')
-      return
-    }
-
-    const isSaved = savedIds.has(video.id)
-    const newSavedIds = new Set(savedIds)
-
-    // Update local state immediately (optimistic)
-    if (isSaved) {
-      newSavedIds.delete(video.id)
-      setSavedIds(newSavedIds)
-
-      // Update videos count optimistically
-      setVideos(videos.map(v => v.id === video.id ? { ...v, saves_count: Math.max(0, (v.saves_count || 0) - 1) } : v))
-
-      const { error } = await supabase
-        .from('saved_videos')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('video_id', video.id)
-
-      if (error) {
-        // Revert
-        setSavedIds(savedIds)
-        loadVideos()
-        console.error(error)
-      }
-    } else {
-      newSavedIds.add(video.id)
-      setSavedIds(newSavedIds)
-
-      setVideos(videos.map(v => v.id === video.id ? { ...v, saves_count: (v.saves_count || 0) + 1 } : v))
-
-      const { error } = await supabase
-        .from('saved_videos')
-        .insert({ user_id: user.id, video_id: video.id })
-
-      if (error) {
-        setSavedIds(savedIds)
-        loadVideos()
-        console.error(error)
-      }
     }
   }
 
@@ -166,11 +108,9 @@ export default function VideoTutorialsPage() {
                   isOwner={isOwner}
                   onDelete={() => handleDelete(video.id)}
                   plays={video.plays}
-                  saves={video.saves_count}
-                  isSaved={savedIds.has(video.id)}
+                  showSave={false}
                   difficulty={video.difficulty}
                   learningTime={video.learning_time}
-                  onToggleSave={() => handleToggleSave(video)}
                   onPlay={() => handlePlay(video.id)}
                   isLoggedIn={!!user}
                 />

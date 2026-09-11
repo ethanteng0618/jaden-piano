@@ -6,8 +6,8 @@ import { SheetMusicBg } from '@/components/theme-accents'
 import { ContentCard } from '@/components/content-card'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { fetchSheetMusic, incrementSheetMusicPlay } from '@/lib/api'
+import { useEffect, useRef, useState } from 'react'
+import { fetchSheetMusic } from '@/lib/api'
 import Loading from './loading'
 import { supabase } from '@/lib/supabase'
 
@@ -17,8 +17,8 @@ export default function SheetMusicPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
-  const [token, setToken] = useState('')
   const [user, setUser] = useState<any>(null)
+  const pendingSaves = useRef(new Set<string>())
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
@@ -43,7 +43,6 @@ export default function SheetMusicPage() {
     if (!session) return
 
     setUser(session.user)
-    setToken(session.access_token)
 
     // Check saves
     const { data: savedData } = await supabase
@@ -97,53 +96,32 @@ export default function SheetMusicPage() {
     }
   }
 
-  async function handleToggleSave(item: any) {
-    if (!user) {
-      alert('Please log in to save sheet music')
-      return
-    }
+  async function handleDownload(id: string) {
+    if (!user || savedIds.has(id) || pendingSaves.current.has(id)) return
+    pendingSaves.current.add(id)
 
-    const isSaved = savedIds.has(item.id)
-    const newSavedIds = new Set(savedIds)
-
-    if (isSaved) {
-      newSavedIds.delete(item.id)
-      setSavedIds(newSavedIds)
-
-      setSheetMusic(sheetMusic.map(s => s.id === item.id ? { ...s, saves_count: Math.max(0, (s.saves_count || 0) - 1) } : s))
-
-      const { error } = await supabase
+    try {
+      const { data, error } = await supabase
         .from('saved_sheet_music')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('sheet_music_id', item.id)
+        .upsert({ user_id: user.id, sheet_music_id: id }, {
+          onConflict: 'user_id,sheet_music_id',
+          ignoreDuplicates: true,
+        })
+        .select('sheet_music_id')
 
-      if (error) {
-        setSavedIds(savedIds)
-        loadSheetMusic()
-        console.error(error)
+      if (error) throw error
+      setSavedIds(previous => new Set(previous).add(id))
+      if (data?.length) {
+        setSheetMusic(previous => previous.map(sheet => sheet.id === id
+          ? { ...sheet, saves_count: (sheet.saves_count || 0) + 1 }
+          : sheet))
       }
-    } else {
-      newSavedIds.add(item.id)
-      setSavedIds(newSavedIds)
-
-      setSheetMusic(sheetMusic.map(s => s.id === item.id ? { ...s, saves_count: (s.saves_count || 0) + 1 } : s))
-
-      const { error } = await supabase
-        .from('saved_sheet_music')
-        .insert({ user_id: user.id, sheet_music_id: item.id })
-
-      if (error) {
-        setSavedIds(savedIds)
-        loadSheetMusic()
-        console.error(error)
-      }
+    } catch (error) {
+      console.error('Failed to save sheet music:', error)
+      alert('The PDF opened, but saving failed. Please try downloading again.')
+    } finally {
+      pendingSaves.current.delete(id)
     }
-  }
-
-  async function handlePlay(id: string) {
-    setSheetMusic(sheetMusic.map(s => s.id === id ? { ...s, plays: (s.plays || 0) + 1 } : s))
-    await incrementSheetMusicPlay(id)
   }
 
   return (
@@ -183,14 +161,14 @@ export default function SheetMusicPage() {
                   tags={sheet.tags || []}
                   type="pdf"
                   downloadUrl={sheet.pdf_url}
+                  pdfPreviewUrl={sheet.pdf_url}
                   isOwner={isOwner}
                   onDelete={() => handleDelete(sheet.id)}
-                  plays={sheet.plays}
+                  savesOnly
                   saves={sheet.saves_count}
                   isSaved={savedIds.has(sheet.id)}
                   learningTime={sheet.learning_time}
-                  onToggleSave={() => handleToggleSave(sheet)}
-                  onPlay={() => handlePlay(sheet.id)}
+                  onDownload={() => handleDownload(sheet.id)}
                   isLoggedIn={!!user}
                 />
               ))}

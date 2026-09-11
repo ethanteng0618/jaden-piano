@@ -9,7 +9,10 @@
     "dev:server": "node server.js",
     "dev:all": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "predev": "node scripts/copy-pdf-assets.mjs",
+    "predev:client": "node scripts/copy-pdf-assets.mjs",
+    "prebuild": "node scripts/copy-pdf-assets.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -59,6 +62,7 @@
     "multer": "^1.4.5-lts.1",
     "next": "16.0.10",
     "next-themes": "^0.4.6",
+    "pdfjs-dist": "5.6.205",
     "react": "19.2.0",
     "react-day-picker": "9.8.0",
     "react-dom": "19.2.0",

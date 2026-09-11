@@ -37,3 +37,6 @@ next-env.d.ts
 
 # uploads
 /public/uploads
+
+# Generated PDF.js assets
+/public/pdfjs/

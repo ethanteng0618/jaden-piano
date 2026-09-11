@@ -3,6 +3,7 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PdfThumbnail } from '@/components/pdf-thumbnail'
 import { SpotlightCard } from '@/components/spotlight-card'
 import { Star, Download, Trash2, Play, LogIn } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -13,12 +14,15 @@ interface ContentCardProps {
   id?: string
   title: string
   thumbnail?: string
+  pdfPreviewUrl?: string
   tags: string[]
   type: 'video' | 'pdf'
   downloadUrl?: string
   aspectRatio?: 'video' | 'vertical'
   isOwner?: boolean
   onDelete?: () => void
+  savesOnly?: boolean
+  onDownload?: () => void | Promise<void>
   plays?: number
   saves?: number
   showSave?: boolean
@@ -35,12 +39,15 @@ export function ContentCard({
   id,
   title,
   thumbnail,
+  pdfPreviewUrl,
   tags,
   type,
   downloadUrl,
   aspectRatio = 'video',
   isOwner = false,
   onDelete,
+  savesOnly = false,
+  onDownload,
   plays = 0,
   saves = 0,
   showSave = true,
@@ -114,6 +121,8 @@ export function ContentCard({
                 alt={title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
+            ) : pdfPreviewUrl ? (
+              <PdfThumbnail url={pdfPreviewUrl} title={title} />
             ) : (
               <div className="flex items-center justify-center h-full bg-gradient-to-br from-muted to-muted/50">
                 {type === 'video' ? (
@@ -129,11 +138,12 @@ export function ContentCard({
             <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
               {/* Stats badges */}
               <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full px-2 py-1 text-xs text-white">
-                <Play className="h-3 w-3 fill-white" />
-                <span>{plays}</span>
+                <span className="sr-only">{savesOnly ? 'Saves' : 'Plays'}</span>
+                {savesOnly ? <Download className="h-3 w-3" /> : <Play className="h-3 w-3 fill-white" />}
+                <span>{savesOnly ? currentSavesCount : plays}</span>
               </div>
 
-              {showSave && <Button
+              {showSave && !savesOnly && <Button
                 size="icon"
                 variant="secondary"
                 className="h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm"
@@ -180,11 +190,11 @@ export function ContentCard({
               </div>
             )}
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
+              {!savesOnly && <span className="flex items-center gap-1">
                 <Play className="h-3 w-3" /> {plays} plays
-              </span>
+              </span>}
               {showSave && <span className="flex items-center gap-1">
-                <Star className="h-3 w-3" /> {currentSavesCount} saves
+                {savesOnly ? <Download className="h-3 w-3" /> : <Star className="h-3 w-3" />} {currentSavesCount} saves
               </span>}
             </div>
           </CardContent>
@@ -204,11 +214,12 @@ export function ContentCard({
                 className="w-full rounded-full font-medium shadow-none hover:shadow-md transition-all"
                 variant="outline"
                 onClick={() => {
-                  if (onPlay) onPlay()
+                  if (!savesOnly && onPlay) onPlay()
                   if (type === 'video') {
                     setIsVideoModalOpen(true)
                   } else {
-                    window.open(downloadUrl, '_blank')
+                    window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+                    if (onDownload) void onDownload()
                   }
                 }}
               >

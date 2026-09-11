@@ -143,8 +143,8 @@ export async function uploadSheetMusic(formData: FormData, token: string) {
       title: formData.get('title'),
       description: formData.get('description') || null,
       tags: JSON.parse(formData.get('tags') as string || '[]'),
-      difficulty: formData.get('difficulty') || 'beginner',
-      learningTime: formData.get('learningTime') || '10 mins',
+      difficulty: (formData.get('difficulty') as string | null)?.trim() || null,
+      learningTime: (formData.get('learningTime') as string | null)?.trim() || null,
       pdf_url
     })
   })

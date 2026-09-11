@@ -26,8 +26,8 @@ export async function POST(req: Request) {
             title: body.title,
             description: body.description || null,
             tags: body.tags || [],
-            difficulty: body.difficulty || 'beginner',
-            learning_time: body.learningTime || '10 mins',
+            difficulty: body.difficulty?.trim() || null,
+            learning_time: body.learningTime?.trim() || null,
             pdf_url: body.pdf_url
         }]).select().single();
 

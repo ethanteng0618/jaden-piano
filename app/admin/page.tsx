@@ -271,7 +271,7 @@ function UploadVideoForm({ token }: { token: string }) {
 
 function UploadSheetMusicForm({ token }: { token: string }) {
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({ title: '', description: '', tags: '', difficulty: 'beginner', learningTime: '10 mins' })
+  const [formData, setFormData] = useState({ title: '', description: '', tags: '', difficulty: '', learningTime: '' })
   const [pdfFile, setPdfFile] = useState<File | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -290,7 +290,7 @@ function UploadSheetMusicForm({ token }: { token: string }) {
 
       await uploadSheetMusic(fd, token)
       alert('Sheet music uploaded successfully!')
-      setFormData({ title: '', description: '', tags: '', difficulty: 'beginner', learningTime: '10 mins' })
+      setFormData({ title: '', description: '', tags: '', difficulty: '', learningTime: '' })
       setPdfFile(null)
     } catch (error: any) {
       alert('Upload failed: ' + error.message)
@@ -324,19 +324,20 @@ function UploadSheetMusicForm({ token }: { token: string }) {
             <Input value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })} placeholder="Intermediate, Classical, Beethoven" />
           </div>
           <div>
-            <Label>Difficulty</Label>
+            <Label>Difficulty (optional)</Label>
             <select
               value={formData.difficulty}
               onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
               className="w-full p-2 border rounded"
             >
+              <option value="">Not specified</option>
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
             </select>
           </div>
           <div>
-            <Label>Learning Time (e.g. 10 mins)</Label>
+            <Label>Learning Time (optional, e.g. 10 mins)</Label>
             <Input value={formData.learningTime} onChange={(e) => setFormData({ ...formData, learningTime: e.target.value })} />
           </div>
           <Button type="submit" disabled={loading}>Upload Sheet Music</Button>

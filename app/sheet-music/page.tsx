@@ -4,7 +4,6 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { SheetMusicBg } from '@/components/theme-accents'
 import { ContentCard } from '@/components/content-card'
-import { DifficultyLegend } from '@/components/difficulty-legend'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -158,7 +157,6 @@ export default function SheetMusicPage() {
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl">
               Download professionally arranged sheet music for all skill levels
             </p>
-            <DifficultyLegend />
 
             <div className="relative max-w-md mt-6">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -190,7 +188,6 @@ export default function SheetMusicPage() {
                   plays={sheet.plays}
                   saves={sheet.saves_count}
                   isSaved={savedIds.has(sheet.id)}
-                  difficulty={sheet.difficulty}
                   learningTime={sheet.learning_time}
                   onToggleSave={() => handleToggleSave(sheet)}
                   onPlay={() => handlePlay(sheet.id)}

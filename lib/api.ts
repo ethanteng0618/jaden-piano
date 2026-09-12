@@ -15,16 +15,18 @@ export async function fetchVideos() {
 }
 
 export async function fetchSheetMusic() {
-  const { data, error } = await supabase
-    .from('sheet_music')
-    .select('*, saved_sheet_music(count)')
-    .order('created_at', { ascending: false })
+  const [{ data, error }, countsResponse] = await Promise.all([
+    supabase.from('sheet_music').select('*').order('created_at', { ascending: false }),
+    fetch('/api/sheet-music/save-counts', { cache: 'no-store' }),
+  ])
 
   if (error) throw error
+  if (!countsResponse.ok) throw new Error('Failed to load sheet music save counts')
+  const counts: Record<string, number> = await countsResponse.json()
+
   return data.map((item: any) => ({
     ...item,
-    saves_count: item.saved_sheet_music?.[0]?.count || 0,
-    saved_sheet_music: undefined
+    saves_count: counts[item.id] ?? 0,
   }))
 }
 

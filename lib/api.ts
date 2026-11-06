@@ -27,6 +27,8 @@ export async function fetchSheetMusic() {
   return data.map((item: any) => ({
     ...item,
     saves_count: counts[item.id] ?? 0,
+    // The existing `plays` column stores sheet music download counts.
+    downloads_count: item.plays ?? 0,
   }))
 }
 
@@ -208,11 +210,9 @@ export async function incrementVideoPlay(id: string) {
   } catch (e) { console.error(e) }
 }
 
-export async function incrementSheetMusicPlay(id: string) {
-  try {
-    const { error } = await supabase.rpc('increment_sheet_music_play', { row_id: id })
-    if (error) console.error('Failed to increment play count')
-  } catch (e) { console.error(e) }
+export async function recordSheetMusicDownload(id: string) {
+  const { error } = await supabase.rpc('increment_sheet_music_play', { row_id: id })
+  if (error) throw error
 }
 
 export async function incrementTechniqueDrillPlay(id: string) {

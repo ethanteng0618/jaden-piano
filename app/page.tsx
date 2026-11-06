@@ -12,7 +12,7 @@ import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 import { useEffect, useState } from 'react'
-import { fetchVideos, fetchSheetMusic, fetchTechniqueDrills, fetchBeginnerPlans } from '@/lib/api'
+import { fetchVideos, fetchSheetMusic, fetchTechniqueDrills, fetchBeginnerPlans, recordSheetMusicDownload } from '@/lib/api'
 import { supabase } from '@/lib/supabase'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
@@ -21,6 +21,17 @@ export default function Home() {
   const [featuredContent, setFeaturedContent] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  async function handleFeaturedSheetDownload(id: string) {
+    try {
+      await recordSheetMusicDownload(id)
+      setFeaturedContent(previous => previous.map(item => item.id === id
+        ? { ...item, downloads: (item.downloads || 0) + 1 }
+        : item))
+    } catch (error) {
+      console.error('Failed to record sheet music download:', error)
+    }
+  }
 
   const startTour = () => {
     const tourDriver = driver({
@@ -54,7 +65,14 @@ export default function Home() {
 
         // Normalize data for display
         const normalizedVideos = videos.map((v: any) => ({ ...v, type: 'video', aspectRatio: 'video', downloadUrl: v.video_url }))
-        const normalizedSheets = sheetMusic.map((s: any) => ({ ...s, type: 'pdf', downloadUrl: s.pdf_url }))
+        const normalizedSheets = sheetMusic.map((s: any) => ({
+          ...s,
+          type: 'pdf',
+          downloadUrl: s.pdf_url,
+          savesOnly: true,
+          downloads: s.downloads_count,
+          onDownload: () => handleFeaturedSheetDownload(s.id),
+        }))
         const normalizedDrills = drills.map((d: any) => ({ ...d, type: 'pdf', downloadUrl: d.pdf_url }))
         const normalizedPlans = plans.map((p: any) => ({ ...p, type: 'plan', description: p.description })) // Plans might need special card handling or just basic info
 

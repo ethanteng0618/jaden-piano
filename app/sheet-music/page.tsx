@@ -7,7 +7,7 @@ import { ContentCard } from '@/components/content-card'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { fetchSheetMusic } from '@/lib/api'
+import { fetchSheetMusic, recordSheetMusicDownload } from '@/lib/api'
 import Loading from './loading'
 import { supabase } from '@/lib/supabase'
 
@@ -97,7 +97,18 @@ export default function SheetMusicPage() {
   }
 
   async function handleDownload(id: string) {
-    if (!user || savedIds.has(id) || pendingSaves.current.has(id)) return
+    if (!user) return
+
+    try {
+      await recordSheetMusicDownload(id)
+      setSheetMusic(previous => previous.map(sheet => sheet.id === id
+        ? { ...sheet, downloads_count: (sheet.downloads_count || 0) + 1 }
+        : sheet))
+    } catch (error) {
+      console.error('Failed to record sheet music download:', error)
+    }
+
+    if (savedIds.has(id) || pendingSaves.current.has(id)) return
     pendingSaves.current.add(id)
 
     try {
@@ -166,6 +177,7 @@ export default function SheetMusicPage() {
                   onDelete={() => handleDelete(sheet.id)}
                   savesOnly
                   saves={sheet.saves_count}
+                  downloads={sheet.downloads_count}
                   isSaved={savedIds.has(sheet.id)}
                   learningTime={sheet.learning_time}
                   onDownload={() => handleDownload(sheet.id)}

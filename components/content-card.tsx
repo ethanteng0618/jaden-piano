@@ -25,6 +25,7 @@ interface ContentCardProps {
   onDownload?: () => void | Promise<void>
   plays?: number
   saves?: number
+  downloads?: number
   showSave?: boolean
   isSaved?: boolean
   onToggleSave?: () => void
@@ -50,6 +51,7 @@ export function ContentCard({
   onDownload,
   plays = 0,
   saves = 0,
+  downloads = 0,
   showSave = true,
   isSaved = false,
   onToggleSave,
@@ -138,9 +140,9 @@ export function ContentCard({
             <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
               {/* Stats badges */}
               <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full px-2 py-1 text-xs text-white">
-                <span className="sr-only">{savesOnly ? 'Saves' : 'Plays'}</span>
+                <span className="sr-only">{savesOnly ? 'Downloads' : 'Plays'}</span>
                 {savesOnly ? <Download className="h-3 w-3" /> : <Play className="h-3 w-3 fill-white" />}
-                <span>{savesOnly ? currentSavesCount : plays}</span>
+                <span>{savesOnly ? downloads : plays}</span>
               </div>
 
               {showSave && !savesOnly && <Button
@@ -194,7 +196,7 @@ export function ContentCard({
                 <Play className="h-3 w-3" /> {plays} plays
               </span>}
               {showSave && <span className="flex items-center gap-1">
-                {savesOnly ? <Download className="h-3 w-3" /> : <Star className="h-3 w-3" />} {currentSavesCount} saves
+                {savesOnly ? <Download className="h-3 w-3" /> : <Star className="h-3 w-3" />} {savesOnly ? downloads : currentSavesCount} {savesOnly ? 'downloads' : 'saves'}
               </span>}
             </div>
           </CardContent>
